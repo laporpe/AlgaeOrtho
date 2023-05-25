@@ -1,0 +1,272 @@
+CLUSTAL O(1.2.3) multiple sequence alignment
+
+
+jgi|ChloA99_1|4112|19440         MPARAGYEP-LPGSCSEPAGALPTASKTARVAGVG-----------LPAFLPPPS-APSS
+jgi|ChloA99_1|7671|1635          -----------------------------------------MYGGG--GYDG--------
+jgi|ChlNC64A_1|133153|41714      MRSSREKLVVREASSSAYEGS-EGDSPEARLEPQGWGGASQTRGAWEHAWAADRRASR-D
+jgi|ChlNC64A_1|140549|1635       -----------------------------------------MYGGG--GFGE--------
+jgi|Chloso1602_1|10019|1635      -----------------------------------------MYGGG--GFDA--------
+jgi|Chloso1602_1|4380|28991      MRTSRGRRVTTI---SYMDGSSPEGSPDAAAADDEW--------------VPRLEALPGG
+jgi|Nansal1776_1|4902|1635       ----------------------------MSYGGFEYGAPADTYGGGGGGFMP--------
+rf|Chlorella                     ------------------------------------------------------------
+                                                                                             
+
+jgi|ChloA99_1|4112|19440         RAPSVQGSSEGQGSEDVLLHLPSEEEVVARRLLALAGCSAPALLRQLGASADGLSEAEAA
+jgi|ChloA99_1|7671|1635          ------------------------------------------------------------
+jgi|ChlNC64A_1|133153|41714      SEPPAGGSCWGG------------------------------------------------
+jgi|ChlNC64A_1|140549|1635       ------------------------------------------------------------
+jgi|Chloso1602_1|10019|1635      ------------------------------------------------------------
+jgi|Chloso1602_1|4380|28991      KAAPLGMQAFAGGAADVPAA----------------------AMQQQGAA----------
+jgi|Nansal1776_1|4902|1635       ------------------------------------------------------------
+rf|Chlorella                     ------------------------------------------------------------
+                                                                                             
+
+jgi|ChloA99_1|4112|19440         ARLRRDGPNVIAMHPTPRWWQVLWHGFRHPFNLTL-------------------------
+jgi|ChloA99_1|7671|1635          ------------------------------------------------------------
+jgi|ChlNC64A_1|133153|41714      --------SGGGSGALEEWEQEVELGMMSPESQKRERRRIANRDCARRIRQRKTALVAEL
+jgi|ChlNC64A_1|140549|1635       ------------------------------------------------------------
+jgi|Chloso1602_1|10019|1635      ------------------------------------------------------------
+jgi|Chloso1602_1|4380|28991      -------AAAAAVHPALDWEEAELLAQLSPESQKRERRRIANRDCARRIRQRQTELLAEL
+jgi|Nansal1776_1|4902|1635       ------------------------------------------------------------
+rf|Chlorella                     --------------------------MLSPESQKRERRRIANRDCARRIRQRKTELLADL
+                                                                                             
+
+jgi|ChloA99_1|4112|19440         -LGLALIQAATGDLAATALVASFVLLSTTLRAWQEARSTVAAARLLAQVSTRTRVVRRWA
+jgi|ChloA99_1|7671|1635          ------------------------------------------------------------
+jgi|ChlNC64A_1|133153|41714      TASVELLQADNSR--------LLGTLTEVTRCWRDTTIENCELR--S------QIAL---
+jgi|ChlNC64A_1|140549|1635       ------------------------------------------------------------
+jgi|Chloso1602_1|10019|1635      ------------------------------------------------------------
+jgi|Chloso1602_1|4380|28991      AATVEKLQADNNR--------LLSTLTEVTRCWRDTTLENCDLR--S------QLTL---
+jgi|Nansal1776_1|4902|1635       ------------------------------------------------------------
+rf|Chlorella                     TASVEQLQADNAR--------LLATLTEVTRCWRDTTLENCELR--A------RIAL---
+                                                                                             
+
+jgi|ChloA99_1|4112|19440         PGGARAHPGSPPPSWAPPAGSTDAGWGGGGISEEGEIPQEE-VVVG---DVVVLRAGMLV
+jgi|ChloA99_1|7671|1635          -GGAS--------QFAGGGFMPSQGAAGG-PGSAKKDYSKSNQSLRAFTIKQLHDGTAA-
+jgi|ChlNC64A_1|133153|41714      ---------------LQAGGSASGGSHSGGSGGSGSLLASPTGDLG---R-HLLSPGWPS
+jgi|ChlNC64A_1|140549|1635       --T---------------GASQQAGGGGGGGASGKKNYDSKQQTLRALTIKQLHDANST-
+jgi|Chloso1602_1|10019|1635      --GAS--------QFNGAGFMPSQGNAGGGAASGKKNFENKSQTLRAVTIKQLADASAQ-
+jgi|Chloso1602_1|4380|28991      ---------------LQASGGSAGGSRGSGSI---------GIGIG---S-DVGSPGAGL
+jgi|Nansal1776_1|4902|1635       --GVG--------DYQGQGMG-FGSPGGGGPGGGPAKPSKEQKTLLPLTVHQVLNAGQDE
+rf|Chlorella                     ---------------LQAGRLSAGGCSSGGTGGSSGLP-S-PVGLG---A-QLGSPGWPL
+                                                   .     .  ..               :       :       
+
+jgi|ChloA99_1|4112|19440         PGDCRLLQARDLFIGQAALTGESMPGEKAAGMCGSGTALLDCSNLCMMGTHVVSGMGRAV
+jgi|ChloA99_1|7671|1635          LHDDAAV-----------IDGKEVANNDA-------------------------------
+jgi|ChlNC64A_1|133153|41714      PMVL--------------------------------------------------------
+jgi|ChlNC64A_1|140549|1635       RQDDTLL-----------LDGKEITNVTLVG-----KVLSTSESGLTFGLKIDDGTGKAD
+jgi|Chloso1602_1|10019|1635      RVDDSLA-----------IDGRDVSNITLVG-----KVLSTNESGLTYGLEIDDGTGKAA
+jgi|Chloso1602_1|4380|28991      ADRLKLIKAMCQ------AFSKPLPDATALEA-----LVLS------------------A
+jgi|Nansal1776_1|4902|1635       PDAPTFK-----------VDGCDLHQVKIVG-----QILDIVETAVMRAYKIDDGTGILS
+rf|Chlorella                     PMVL--------------------------------------------------------
+                                                                                             
+
+jgi|ChloA99_1|4112|19440         VIATGDHTYWASLAHT-----------LG-------RR------RAPNAF-QRGVKHVSF
+jgi|ChloA99_1|7671|1635          --------------GDDASRARLAEIQPGGYVRAHGHFQSFNSERSMVAFN---------
+jgi|ChlNC64A_1|133153|41714      ------------------------------------------------------------
+jgi|ChlNC64A_1|140549|1635       ------VKIWISEDDSELEKQRRAEWRAGMYVRVHGHISNFGRTQDVLAFNIRTVTDHNE
+jgi|Chloso1602_1|10019|1635      ------VKIWISDDDSELDKQRRAEWRAGSYVRVHGHISNFGKNQEVIAFNIRPVTDHNE
+jgi|Chloso1602_1|4380|28991      ATFRAESSRWAGVRNRQLASQ------IGQLAQQLAALAQPTADSLADAS-EEGRQDDSN
+jgi|Nansal1776_1|4902|1635       ------CHVFSEQDESEYAQERRSYCQKGAYVGVVGQVRDYQGKRHVSVHDMRVVKDGNE
+rf|Chlorella                     ------------------------------------------------------------
+                                                                                             
+
+jgi|ChloA99_1|4112|19440         LLLAFMAALVPVVV--RG--GWAG---QVAVGAWSTGSWTEALLFGISVAVGLT----PE
+jgi|ChloA99_1|7671|1635          VTYHFLQAIFQHVHHTKGTGAPAGGYAAPAAG--GGYG--AAPAAG--------------
+jgi|ChlNC64A_1|133153|41714      ------------------------------------------------------------
+jgi|ChlNC64A_1|140549|1635       VTYHFLQCIFQHVHLTKGGGDQAGAAAAPAPAAQGAYGGAAPAVAG--------------
+jgi|Chloso1602_1|10019|1635      ITYHFLQCIFQHAHLVKGAPGGGA--VKQEQGGYGAPAAAAPAAGG--------------
+jgi|Chloso1602_1|4380|28991      VLMGYTQAAM--LA--AY--GCAT---AAWVGEWGQWPTVRNDLFRVLSAAQVVLLAGRQ
+jgi|Nansal1776_1|4902|1635       ITHHLLEAIWVHCQNTKGRMLKPGAAVGSGMG-----LGMGMGMGG--------------
+rf|Chlorella                     ------------------------------------------------------------
+                                                                                             
+
+jgi|ChloA99_1|4112|19440         MLPVVVDA------NLARGAVAMAGRRAIVRRLDAVQNLGAMDVLCCDKT----------
+jgi|ChloA99_1|7671|1635          -------------YGAAPA----AGG----GGLTAVQ-QEVMAVFSA---PDAL------
+jgi|ChlNC64A_1|133153|41714      ------------------------------------------------------------
+jgi|ChlNC64A_1|140549|1635       -------------YA-APA----AAGYNP-GGLTAIQ-SDLMTLFNA---PDAQA-----
+jgi|Chloso1602_1|10019|1635      -------------YGGAPA----AGGYNPNGGLSAVQ-ADVMNFFNA---PDAQ------
+jgi|Chloso1602_1|4380|28991      SLQVQLARAAARRSGGSSGAAAVAGLRHLLLLETASLQLEVMEAVFAKLAPPATTEQLAR
+jgi|Nansal1776_1|4902|1635       -------------YGGVSGKMMMAGPGGMNGGTNDVH-EAVLNAFME-----YSM-----
+rf|Chlorella                     ------------------------------------------------------------
+                                                                                             
+
+jgi|ChloA99_1|4112|19440         --GTLTRDEVVLMRWLDWRGRKS---------------------PHALRWGFLNASFQAS
+jgi|ChloA99_1|7671|1635          ------------------------------------------------------------
+jgi|ChlNC64A_1|133153|41714      ------------------------------------------------------------
+jgi|ChlNC64A_1|140549|1635       ------------------------------------------------------------
+jgi|Chloso1602_1|10019|1635      ------------------------------------------------------------
+jgi|Chloso1602_1|4380|28991      TVAAAVAPPQLLLPWLHAICQALVEASRRGVTDKDWSADFGNPFSVLLNYILMDDVYGRQ
+jgi|Nansal1776_1|4902|1635       ------------------------------------------------------------
+rf|Chlorella                     ------------------------------------------------------------
+                                                                                             
+
+jgi|ChloA99_1|4112|19440         Q------RMTGIRSILDTAVI-----REGAREGRCGEEGLGDDACHFDVLDEIPFDFVRR
+jgi|ChloA99_1|7671|1635          ------------------------------------------------------------
+jgi|ChlNC64A_1|133153|41714      ------------------------------------------------------------
+jgi|ChlNC64A_1|140549|1635       ------------------------------------------------------------
+jgi|Chloso1602_1|10019|1635      ------------------------------------------------------------
+jgi|Chloso1602_1|4380|28991      QQELEAPHSSGLRLALAQAVMCCLSQLADAAEQRLGAIGSGGNPCNSAA-----------
+jgi|Nansal1776_1|4902|1635       ------------------------------------------------------------
+rf|Chlorella                     ------------------------------------------------------------
+                                                                                             
+
+jgi|ChloA99_1|4112|19440         RVSVVLQGDGGPPLLLAKGAVEEMLGVCDSVEDGDSM-------VEMCTEQR--REL---
+jgi|ChloA99_1|7671|1635          ------------------------------------------------------------
+jgi|ChlNC64A_1|133153|41714      ------------------------------------------------------------
+jgi|ChlNC64A_1|140549|1635       ------------------------------------------------------------
+jgi|Chloso1602_1|10019|1635      ------------------------------------------------------------
+jgi|Chloso1602_1|4380|28991      -------GSGGG-----SGGGSGGSGSCSGCSNGSSGSSSGGSSSMRCRAGAVRSNAQRS
+jgi|Nansal1776_1|4902|1635       ------------------------------------------------------------
+rf|Chlorella                     ------------------------------------------------------------
+                                                                                             
+
+jgi|ChloA99_1|4112|19440         ---TELGEHLNADGLRVLAVAVKQARRRRSCWLGHVAAAAQEAVAALQRRAVSLRVLTGD
+jgi|ChloA99_1|7671|1635          ------------------------------------------------------------
+jgi|ChlNC64A_1|133153|41714      ------------------------------------------------------------
+jgi|ChlNC64A_1|140549|1635       ------------------------------------------------------------
+jgi|Chloso1602_1|10019|1635      ------------------------------------------------------------
+jgi|Chloso1602_1|4380|28991      GGDSGGGDHTATKLIALLSSLVLLCECFEECVLQQA----FVEL-----AAVPNDLLGGM
+jgi|Nansal1776_1|4902|1635       ------------------------------------------------------------
+rf|Chlorella                     ------------------------------------------------------------
+                                                                                             
+
+jgi|ChloA99_1|4112|19440         SAAVGAKVGLCATPVIGQDAGRLLTSFPWPELDAMHPAQFAAAAERATLLARLTPHHKER
+jgi|ChloA99_1|7671|1635          -----------------------------------TDTGLSINDVQARLGGRLSYPTVRD
+jgi|ChlNC64A_1|133153|41714      ------------------------------------------------------------
+jgi|ChlNC64A_1|140549|1635       -----------------------------------SDAGISIDAVLSRSGGRYSLVQVRE
+jgi|Chloso1602_1|10019|1635      -----------------------------------GDAGISLDDVLARAGGRYSMVQIRE
+jgi|Chloso1602_1|4380|28991      RAGV-----------------RLSLALPLAAPAGVSPKLLALAHEAAA------------
+jgi|Nansal1776_1|4902|1635       -----------------------------------GDNGAELATVVRALSGKLSANQIQQ
+rf|Chlorella                     ------------------------------------------------------------
+                                                                                             
+
+jgi|ChloA99_1|4112|19440         VVAALQHQGHTVGFLGDGVNDGPALRAADVGISVDSATDVAKQAADLILLEKSLGVLEAG
+jgi|ChloA99_1|7671|1635          AVEMLMNQGHIY------------------------------------------------
+jgi|ChlNC64A_1|133153|41714      ------------------------------------------------------------
+jgi|ChlNC64A_1|140549|1635       AVEALQNEGHLY------------------------------------------------
+jgi|Chloso1602_1|10019|1635      AVDALQNEGHLY------------------------------------------------
+jgi|Chloso1602_1|4380|28991      ---------KSMAITADSLMRQPAVAE---------------------LWE----QFEAS
+jgi|Nansal1776_1|4902|1635       ATEFLAQEGRLY------------------------------------------------
+rf|Chlorella                     ------------------------------------------------------------
+                                                                                             
+
+jgi|ChloA99_1|4112|19440         VVQGRITHGNTQKYIALAASSNF-GNVFSILVASAWLPFQPMTPLQLLTQNLLYDLSQTA
+jgi|ChloA99_1|7671|1635          ------------------------------------------------------------
+jgi|ChlNC64A_1|133153|41714      ------------------------------------------------------------
+jgi|ChlNC64A_1|140549|1635       ------------------------------------------------------------
+jgi|Chloso1602_1|10019|1635      ------------------------------------------------------------
+jgi|Chloso1602_1|4380|28991      CEQPATTATGADA--AAAAGADAAAVANATEAAQVWLRALPRLAAA--------------
+jgi|Nansal1776_1|4902|1635       ------------------------------------------------------------
+rf|Chlorella                     ------------------------------------------------------------
+                                                                                             
+
+jgi|ChloA99_1|4112|19440         IPFDHMDE-SYLAAPRPWSAAGIGRFMLCIGPTSSIFDIATF----AMLWWGYGANTRAT
+jgi|ChloA99_1|7671|1635          ---STID---------------ESHFRACA------------------------------
+jgi|ChlNC64A_1|133153|41714      ------------------------------------------------------------
+jgi|ChlNC64A_1|140549|1635       ---STID---------------EHHFKSCNA-----------------------------
+jgi|Chloso1602_1|10019|1635      ---STID---------------ENHFKSCNA-----------------------------
+jgi|Chloso1602_1|4380|28991      --LPHLVAADADDDRSAWLDRLVGHYAC---PMQLLYMIGSFGSADEVVQWATAAEADLR
+jgi|Nansal1776_1|4902|1635       ---TTLD---------------ENHYKPT-------------------------------
+rf|Chlorella                     ------------------------------------------------------------
+                                                                                             
+
+jgi|ChloA99_1|4112|19440         LIVHMIRTERVPFLQSVGAVRRGAVLRAAAWLRGRRAAWARACDRDSPPACPTYSRFCRA
+jgi|ChloA99_1|7671|1635          ------------------------------------------------------------
+jgi|ChlNC64A_1|133153|41714      ------------------------------------------------------------
+jgi|ChlNC64A_1|140549|1635       ------------------------------------------------------------
+jgi|Chloso1602_1|10019|1635      ------------------------------------------------------------
+jgi|Chloso1602_1|4380|28991      LLPLLVCSDAPPSAA---EQRAG--------------------PAPMAPLCSE-RRYAGA
+jgi|Nansal1776_1|4902|1635       ------------------------------------------------------------
+rf|Chlorella                     ------------------------------------------------------------
+                                                                                             
+
+jgi|ChloA99_1|4112|19440         FFLAWRE--------------------------YILMAEPPSCCITSTAPWRQRKMMSFD
+jgi|ChloA99_1|7671|1635          ------------------------------------------------------------
+jgi|ChlNC64A_1|133153|41714      ------------------------------------------------------------
+jgi|ChlNC64A_1|140549|1635       ------------------------------------------------------------
+jgi|Chloso1602_1|10019|1635      ------------------------------------------------------------
+jgi|Chloso1602_1|4380|28991      YSAQLEAMQLVMAATAELPSNDSTQAGTDAILAGALSCAPYAACQLDSDGWMARMCHSLD
+jgi|Nansal1776_1|4902|1635       ------------------------------------------------------------
+rf|Chlorella                     ------------------------------------------------------------
+                                                                                             
+
+jgi|ChloA99_1|4112|19440         RNSEEAVLSLASFSALPRVESESQSRAFKSHPATQFQDYLKKIPSPSALQMDQSFEPALE
+jgi|ChloA99_1|7671|1635          ------------------------------------------------------------
+jgi|ChlNC64A_1|133153|41714      ------------------------------------------------------------
+jgi|ChlNC64A_1|140549|1635       ------------------------------------------------------------
+jgi|Chloso1602_1|10019|1635      ------------------------------------------------------------
+jgi|Chloso1602_1|4380|28991      AIARV-----------PIMPAEK--RVWALHA----------------------------
+jgi|Nansal1776_1|4902|1635       ------------------------------------------------------------
+rf|Chlorella                     ------------------------------------------------------------
+                                                                                             
+
+jgi|ChloA99_1|4112|19440         AGPPGVVPRVPSLDLLRRGAGQAPAVLVPALDLGTGQLRMQGESISADDASPQATTLAGG
+jgi|ChloA99_1|7671|1635          ------------------------------------------------------------
+jgi|ChlNC64A_1|133153|41714      ------------------------------------------------------------
+jgi|ChlNC64A_1|140549|1635       ------------------------------------------------------------
+jgi|Chloso1602_1|10019|1635      ------------------------------------------------------------
+jgi|Chloso1602_1|4380|28991      -ALRGLCDKPRLVARLVAGGGMAAAC----QHISQPGLQCSGEAY----------ETAHE
+jgi|Nansal1776_1|4902|1635       ------------------------------------------------------------
+rf|Chlorella                     ------------------------------------------------------------
+                                                                                             
+
+jgi|ChloA99_1|4112|19440         AFFPFAPYA-GLA----PITQLQAATASAASMANPGAMLAALMQGQLAPVATAPGVAAAA
+jgi|ChloA99_1|7671|1635          ------------------------------------------------------------
+jgi|ChlNC64A_1|133153|41714      ------------------------------------------------------------
+jgi|ChlNC64A_1|140549|1635       ------------------------------------------------------------
+jgi|Chloso1602_1|10019|1635      ------------------------------------------------------------
+jgi|Chloso1602_1|4380|28991      CFYLLRDMLVDLLDAGDEIASRRAASATEQA-VAPAERLG--LNARLMARLAARGVLAAA
+jgi|Nansal1776_1|4902|1635       ------------------------------------------------------------
+rf|Chlorella                     ------------------------------------------------------------
+                                                                                             
+
+jgi|ChloA99_1|4112|19440         GDALPPAPLSPTALGPGTPLTPAVEAALPDAEACGEEVQPA--------SPTTAVAMTTT
+jgi|ChloA99_1|7671|1635          ------------------------------------------------------------
+jgi|ChlNC64A_1|133153|41714      ------------------------------------------------------------
+jgi|ChlNC64A_1|140549|1635       ------------------------------------------------------------
+jgi|Chloso1602_1|10019|1635      ------------------------------------------------------------
+jgi|Chloso1602_1|4380|28991      SRHVLRLGLTSS-------------EAHVSARYCFELLNTLVFYVLDTAGEVATLLLRVW
+jgi|Nansal1776_1|4902|1635       ------------------------------------------------------------
+rf|Chlorella                     ------------------------------------------------------------
+                                                                                             
+
+jgi|ChloA99_1|4112|19440         APPPARRGAR--SSRSRSARSAAAAAADSHGGHGSAGTVAQEEPTPAALLDIPNAEGMTK
+jgi|ChloA99_1|7671|1635          ------------------------------------------------------------
+jgi|ChlNC64A_1|133153|41714      ------------------------------------------------------------
+jgi|ChlNC64A_1|140549|1635       ------------------------------------------------------------
+jgi|Chloso1602_1|10019|1635      ------------------------------------------------------------
+jgi|Chloso1602_1|4380|28991      GSPEQQAALQLEMAQAAATRSCAYLRCANLGGEGGP--YAG--------------QGVGS
+jgi|Nansal1776_1|4902|1635       ------------------------------------------------------------
+rf|Chlorella                     ------------------------------------------------------------
+                                                                                             
+
+jgi|ChloA99_1|4112|19440         QELRRARRMLSNRE-----SARRSRKRKQEHLASLEQQARAPCPPAAARRTQECSDPRLH
+jgi|ChloA99_1|7671|1635          ------------------------------------------------------------
+jgi|ChlNC64A_1|133153|41714      ------------------------------------------------------------
+jgi|ChlNC64A_1|140549|1635       ------------------------------------------------------------
+jgi|Chloso1602_1|10019|1635      ------------------------------------------------------------
+jgi|Chloso1602_1|4380|28991      KRCSACRAVWYCRTACSHADWRAGHKRVCKALAAARQAE-------KEAARQGCAEGRLK
+jgi|Nansal1776_1|4902|1635       ------------------------------------------------------------
+rf|Chlorella                     ------------------------------------------------------------
+                                                                                             
+
+jgi|ChloA99_1|4112|19440         ALPAPAPALQAGDAAAQREELTSKIARLSEELRQREAELAALRAENAALRRCGGGGRHGA
+jgi|ChloA99_1|7671|1635          ------------------------------------------------------------
+jgi|ChlNC64A_1|133153|41714      ------------------------------------------------------------
+jgi|ChlNC64A_1|140549|1635       ------------------------------------------------------------
+jgi|Chloso1602_1|10019|1635      ------------------------------------------------------------
+jgi|Chloso1602_1|4380|28991      K----------------------RTVRFGNSLQ---------------------------
+jgi|Nansal1776_1|4902|1635       ------------------------------------------------------------
+rf|Chlorella                     ------------------------------------------------------------
+                                                                                             
+
+jgi|ChloA99_1|4112|19440         GRAGGAHPHGEDGVRLRPRA
+jgi|ChloA99_1|7671|1635          --------------------
+jgi|ChlNC64A_1|133153|41714      --------------------
+jgi|ChlNC64A_1|140549|1635       --------------------
+jgi|Chloso1602_1|10019|1635      --------------------
+jgi|Chloso1602_1|4380|28991      --------------------
+jgi|Nansal1776_1|4902|1635       --------------------
+rf|Chlorella                     --------------------
+                                                     
