@@ -1,0 +1,13 @@
+# docker-compose.yml
+version: "3"
+services:
+  algaeortho:
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    image: dav-algaeortho:0.0.1
+    ports:
+      - "8050:8050"
+    environment:
+      SERVER_PORT: 8050
+      DASH_DEBUG_MODE: True

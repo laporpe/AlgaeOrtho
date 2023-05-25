@@ -2,6 +2,7 @@
 
 import base64
 import io
+import os
 from dash import Dash, html, dcc, Input, Output, ctx, dash_table
 import dash_bootstrap_components as dbc
 from dash_bootstrap_templates import load_figure_template
@@ -543,4 +544,6 @@ def update_data(n_clicks1, n_clicks2, contents2):
 
 
 if __name__ == '__main__':
-    app.run_server(debug=True)
+    envPort = int(os.getenv('SERVER_PORT', '8050'))
+    envDebug = os.getenv('DASH_DEBUG_MODE', 'True').lower() == 'true'
+    app.run_server(debug=envDebug, host='0.0.0.0', port=envPort)
