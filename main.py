@@ -430,9 +430,13 @@ def update_data(n_clicks1, n_clicks2, contents2):
 
             except:
                 msg = 'An error occurred'
-                logging.error(msg)
+                long_msg = 'An error occurred. Please check your input file and try again. Refresh the page if the error persists.'
+                logging.error(long_msg)
                 #return html.Div(id=msg)
-                return no_update
+                error_fig = ff.create_table([[msg],[long_msg]], height_constant=20)
+                # Make text size larger
+                error_fig.layout.annotations[0].font.size = 20
+                return msg, error_fig, [], long_msg
 
 
     if not df.empty:
