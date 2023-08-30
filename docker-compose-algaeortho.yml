@@ -5,7 +5,7 @@ services:
     build:
       context: .
       dockerfile: ./Dockerfile
-    image: dav-algaeortho:0.0.1
+    image: algaeortho:0.0.1
     ports:
       - "8050:8050"
     environment:

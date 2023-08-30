@@ -7,14 +7,24 @@ WORKDIR /app
 COPY environment.yml ./
 RUN conda env create -f environment.yml
 
+# install unzip
 RUN apt-get update && apt-get install -y unzip
 
 # make RUN commands use the new environment
-SHELL ["conda", "run", "-n", "algaeortho", "/bin/bash", "-c"]
+# SHELL ["conda", "run", "-n", "algaeortho", "/bin/bash", "-c"]
+ENV PATH="/opt/conda/envs/algaeortho/bin:$PATH"
+RUN which python && python --version
+
+# copy the zip file and unzip it
+COPY ortholog_groups.tsv.zip ./
+RUN unzip ortholog_groups.tsv.zip
 
 # copy the rest of the files
 COPY . .
-RUN unzip ortholog_groups.tsv.zip
+
+# run the app without starting the server
+# to generate the df_to_merge pickle file
+RUN python -u main.py --noserver
 
 # set environment variables
 ENV SERVER_PORT=8050
@@ -27,4 +37,4 @@ EXPOSE 8050
 ### everything below this runs when the container is started
 
 # run the app
-CMD python3 -u main.py
+CMD ["python", "-u", "main.py"]
