@@ -10,7 +10,7 @@ import pandas as pd
 import plotly.figure_factory as ff
 import numpy as np
 import math
-from Bio import AlignIO, Phylo
+from Bio import AlignIO, Phylo, SeqIO
 import dash_cytoscape as cyto
 from Bio.Phylo.TreeConstruction import DistanceCalculator
 from Bio.Phylo.TreeConstruction import DistanceTreeConstructor
@@ -19,6 +19,10 @@ import subprocess
 import logging
 import pickle
 import argparse
+import traceback
+from itertools import groupby
+
+RUNNING_IN_DOCKER = os.getenv('ALGAEORTHO_DOCKER', 'True').lower() == 'true'
 
 logging.basicConfig(level=logging.DEBUG)
 logging.debug("Starting AlgaeOrtho App...")
@@ -376,62 +380,116 @@ def update_data(n_clicks1, n_clicks2, contents2):
             try:
                 content_type, content_string = contents2.split(",")
                 decoded = base64.b64decode(content_string)
+                decoded = decoded.decode('utf-8').replace("\\n", "\n")
+                fasta_sio = io.StringIO(decoded)
+                #prot_file = (pd.read_csv(fasta_sio))
+                fasta_sio.seek(0)
 
-                for_phylogeny = (pd.read_csv(io.StringIO(decoded.decode('utf-8'))))
-                #
-                prot_file = for_phylogeny
+                id_dict = {
+                    "jgi": [],
+                    "species": [],
+                    "proteinId": [],
+                    "modelId": [],
+                }
+                seq_dict = {
+                    "modelId": [],
+                    "proteinSeq": [],
+                }
+                for record in SeqIO.parse(fasta_sio, "fasta"):
+                    #logging.debug(record.id.split("|"))
+                    #logging.debug(record.seq)
+                    record_id_split = record.id.split("|", 3)
+                    id_dict["jgi"].append(record_id_split[0])
+                    id_dict["species"].append(record_id_split[1])
+                    id_dict["proteinId"].append(record_id_split[2])
+                    id_dict["modelId"].append(record_id_split[3])
+                    seq_dict["modelId"].append(record_id_split[3])
+                    seq_dict["proteinSeq"].append(record.seq)
+                
+                logging.debug("loaded IDs and sequences from fasta file")
 
-                prot_file_2 = prot_file.iloc[:, 0].str.split("\n", expand=True)
-                prot_file_1 = prot_file.iloc[:, 0].str.split("|", 3, expand=True)
+                # prot_file_2 = prot_file.iloc[:, 0].str.split("\n", expand=True)
+                # prot_file_1 = prot_file.iloc[:, 0].str.split("|", 3, expand=True)
+                #print("pf1: ", prot_file_1.info())
+                #print("pf2: ",prot_file_2.info())
+                # prot_ce = prot_file_2.iloc[:, 0].str.split("|", 3, expand=True)
+                #print("pce:", prot_ce.info())
+                # prot_ce.columns = ["jgi", "species", "proteinId", "modelId"]
 
-                prot_ce = prot_file_2.iloc[:, 0].str.split("|", 3, expand=True)
-                # print(prot_ce.head())
-                prot_ce.columns = ["jgi", "species", "proteinId", "modelId"]
+                # P_sequence = prot_file_1.iloc[:, 3].str.split("\n", n=1, expand=True)
+                # P_sequence.columns = ["modelId", "proteinSeq"]
+
+                prot_ce = pd.DataFrame(id_dict)
                 prot_ce["proteinId"] = pd.to_numeric(prot_ce["proteinId"])
-                P_sequence = prot_file_1.iloc[:, 3].str.split("\n", n=1, expand=True)
-                P_sequence.columns = ["modelId", "proteinSeq"]
+                
+                P_sequence = pd.DataFrame(seq_dict)
+                logging.debug("created prot_ce and P_sequence DFs")
 
                 desc_seq_tet = P_sequence.merge(prot_ce, how="inner", on="modelId")
                 desc_seq_tet['proteinId'] = desc_seq_tet['proteinId'].astype('str')
+                logging.debug("merged desc_seq_tet")
                 
                 merged_to_fasta = desc_seq_tet.merge(df_to_merge, how="left", on=["species", "proteinId"])
+                logging.debug("merged to_fasta")
                 merged_all = merged_to_fasta.merge(df_to_merge, how="left", on=["group_id"])
+                logging.debug("merged all")
 
                 merged_all['group_id'] = merged_all['group_id'].astype('str')
                 merged_all['proteinId_y'] = merged_all['proteinId_y'].astype('str')
 
                 merged_all["label"] = merged_all[['jgi', 'species_y', 'proteinId_y', 'group_id']].apply(
                     lambda x: '|'.join(x[x.notnull()]), axis=1)
+                logging.debug("created labels")
 
                 to_fasta = merged_all[['label', 'proteinSeq']].copy()
 
                 to_fasta['label'] = '>' + to_fasta['label'].astype(str)
-                to_fasta['proteinSeq'] = to_fasta['proteinSeq'].str.replace('*', '', regex=True)
+                #logging.debug(df_to_merge.head())
+                #logging.debug(to_fasta.head())
+                to_fasta['proteinSeq'] = to_fasta['proteinSeq'].astype(str)
+                # to_fasta['proteinSeq'] = to_fasta['proteinSeq'].str.replace('*', '', regex=True)
+                #logging.debug(to_fasta.head())
+                logging.debug("created to_fasta")
 
-                f = io.StringIO()
-                for index, row in to_fasta.iterrows():
-                    print(row["label"], f'\n', row["proteinSeq"], file="./ortho.fasta")
+                path = "."
+                if RUNNING_IN_DOCKER:
+                    path = "/data"
+                #f = io.StringIO()
+                with open(path + "/ortho.fasta", 'w') as f:
+                    for index, row in to_fasta.iterrows():
+                        #logging.debug(str(row))
+                        #print(row["label"], f'\n', row["proteinSeq"], file="./ortho.fasta")
+                        try:
+                            f.write(row["label"] + "\n" + row["proteinSeq"] + "\n")
+                        except Exception as e:
+                            #logging.error("error writing to_fasta: " + str(e))
+                            pass
+                logging.debug("wrote to_fasta to " + path + "/ortho.fasta")
 
-                in_file = "./ortho.fasta"
-                out_file2 = "./ortho.pim.txt"
-                out_file4 = "./ortho.clu"
+                in_file = path + "/ortho.fasta"
+                out_file2 = path + "/ortho.pim.txt"
+                out_file4 = path + "/ortho.clu"
 
                 subprocess.run(["clustalo", "-i", in_file, "-o", out_file4, "--outfmt", "clu"], text=True)
                 subprocess.run(["clustalo", "-i", out_file4, "--percent-id", "--distmat-out=" + out_file2, "--full"],
                                text=True)
 
-                alignfile = "ortho.clu"
+                alignfile = path + "/ortho.clu"
 
                 with open(alignfile, "r") as aln:
                     alignment = AlignIO.read(aln, "clustal")
 
-                df3 = pd.read_csv("ortho.pim.txt", skiprows=1, header=None, delim_whitespace=True)
+                df3 = pd.read_csv(path + "/ortho.pim.txt", skiprows=1, header=None, delim_whitespace=True)
                 df = df3
 
-            except:
+            except Exception as e:
                 msg = 'An error occurred'
                 long_msg = 'An error occurred. Please check your input file and try again. Refresh the page if the error persists.'
-                logging.error(long_msg)
+                #logging.error(long_msg)
+                #logging.error(long_msg, str(e))
+                # print stack trace 
+                traceback.print_exc() 
+                
                 #return html.Div(id=msg)
                 error_fig = ff.create_table([[msg],[long_msg]], height_constant=20)
                 # Make text size larger

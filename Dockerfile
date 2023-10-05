@@ -29,6 +29,7 @@ RUN python -u main.py --noserver
 # set environment variables
 ENV SERVER_PORT=8050
 ENV DASH_DEBUG_MODE=True
+ENV ALGAEORTHO_DOCKER=True
 
 # expose the server port
 EXPOSE 8050
