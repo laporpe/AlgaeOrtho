@@ -474,12 +474,14 @@ def update_data(n_clicks1, n_clicks2, contents2):
                             pass
                 logging.debug("wrote to_fasta to " + in_file_fasta)
 
+                logging.debug("running clustalo with input: " + in_file_fasta)
                 subprocess.run(["clustalo", "-i", in_file_fasta, "-o", out_file_clu, "--outfmt", "clu", "--threads", "8", "-v", "-v", "-v"], 
-                               text=True)
+                               text=True, check=True)
                 logging.debug("ran clustalo with output: " + out_file_clu)
 
+                logging.debug("running clustalo with input: " + out_file_clu)
                 subprocess.run(["clustalo", "-i", out_file_clu, "--percent-id", "--distmat-out=" + out_file_pimtxt, "--full", "--threads", "8"],
-                               text=True)
+                               text=True, check=True)
                 logging.debug("ran clustalo with output: " + out_file_pimtxt)
 
                 alignfile = out_file_clu
@@ -495,9 +497,9 @@ def update_data(n_clicks1, n_clicks2, contents2):
                 msg = 'An error occurred'
                 long_msg = 'An error occurred. Please check your input file and try again. Refresh the page if the error persists.'
                 #logging.error(long_msg)
-                #logging.error(long_msg, str(e))
+                logging.error(str(e))
                 # print stack trace 
-                traceback.print_exc() 
+                traceback.print_exc()
                 
                 #return html.Div(id=msg)
                 error_fig = ff.create_table([[msg],[long_msg]], height_constant=20)
