@@ -22,7 +22,9 @@ import argparse
 import traceback
 from itertools import groupby
 
-RUNNING_IN_DOCKER = os.getenv('ALGAEORTHO_DOCKER', 'True').lower() == 'true'
+import time_utilities as tu
+
+RUNNING_IN_DOCKER = os.getenv('ALGAEORTHO_DOCKER', 'False').lower() == 'true'
 
 logging.basicConfig(level=logging.DEBUG)
 logging.debug("Starting AlgaeOrtho App...")
@@ -451,36 +453,43 @@ def update_data(n_clicks1, n_clicks2, contents2):
                 #logging.debug(to_fasta.head())
                 logging.debug("created to_fasta")
 
+                time_str = "_" + tu.datetime_now_label()
                 path = "."
                 if RUNNING_IN_DOCKER:
                     path = "/data"
                 #f = io.StringIO()
-                with open(path + "/ortho.fasta", 'w') as f:
+
+                in_file_fasta = path + "/ortho" + time_str + ".fasta"
+                out_file_clu = path + "/ortho" + time_str + ".clu"
+                out_file_pimtxt = path + "/ortho" + time_str + ".pim.txt"    
+                
+                with open(in_file_fasta, 'w') as f:
                     for index, row in to_fasta.iterrows():
                         #logging.debug(str(row))
-                        #print(row["label"], f'\n', row["proteinSeq"], file="./ortho.fasta")
+                        #print(row["label"], f'\n', row["proteinSeq"], file=in_file_fasta)
                         try:
                             f.write(row["label"] + "\n" + row["proteinSeq"] + "\n")
                         except Exception as e:
                             #logging.error("error writing to_fasta: " + str(e))
                             pass
-                logging.debug("wrote to_fasta to " + path + "/ortho.fasta")
+                logging.debug("wrote to_fasta to " + in_file_fasta)
 
-                in_file = path + "/ortho.fasta"
-                out_file2 = path + "/ortho.pim.txt"
-                out_file4 = path + "/ortho.clu"
-
-                subprocess.run(["clustalo", "-i", in_file, "-o", out_file4, "--outfmt", "clu"], text=True)
-                subprocess.run(["clustalo", "-i", out_file4, "--percent-id", "--distmat-out=" + out_file2, "--full"],
+                subprocess.run(["clustalo", "-i", in_file_fasta, "-o", out_file_clu, "--outfmt", "clu", "--threads", "8", "-v", "-v", "-v"], 
                                text=True)
+                logging.debug("ran clustalo with output: " + out_file_clu)
 
-                alignfile = path + "/ortho.clu"
+                subprocess.run(["clustalo", "-i", out_file_clu, "--percent-id", "--distmat-out=" + out_file_pimtxt, "--full", "--threads", "8"],
+                               text=True)
+                logging.debug("ran clustalo with output: " + out_file_pimtxt)
 
+                alignfile = out_file_clu
                 with open(alignfile, "r") as aln:
                     alignment = AlignIO.read(aln, "clustal")
+                logging.debug("loaded alignment from: " + alignfile)
 
-                df3 = pd.read_csv(path + "/ortho.pim.txt", skiprows=1, header=None, delim_whitespace=True)
+                df3 = pd.read_csv(out_file_pimtxt, skiprows=1, header=None, delim_whitespace=True)
                 df = df3
+                logging.debug("loaded df: " + str(df))
 
             except Exception as e:
                 msg = 'An error occurred'
