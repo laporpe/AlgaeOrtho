@@ -23,10 +23,11 @@ import traceback
 from itertools import groupby
 
 import time
+import multiprocessing
 
 RUNNING_IN_DOCKER = os.getenv('ALGAEORTHO_DOCKER', 'False').lower() == 'true'
 
-logging.basicConfig(level=logging.DEBUG)
+logging.basicConfig(level=logging.DEBUG, format='%(asctime)s %(message)s')
 logging.debug("Starting AlgaeOrtho App...")
 
 # Original Input File will be the results from SonicParanoid
@@ -453,16 +454,21 @@ def update_data(n_clicks1, n_clicks2, contents2):
                 #logging.debug(to_fasta.head())
                 logging.debug("created to_fasta")
 
+                # get a unique filename
                 filename = "ortho_" + str(int(time.time()))
-                path = "."
+                # if the app is running in a docker container, the path is different
+                # note: there is a leading dot in the local path
+                path = "./data"
                 if RUNNING_IN_DOCKER:
                     path = "/data"
                 #f = io.StringIO()
 
+                # get the full path of each file
                 in_file_fasta = path + "/" + filename + ".fasta"
                 out_file_clu = path + "/" + filename + ".clu"
                 out_file_pimtxt = path + "/" + filename + ".pim.txt"
                 
+                # write the fasta file
                 with open(in_file_fasta, 'w') as f:
                     for index, row in to_fasta.iterrows():
                         #logging.debug(str(row))
@@ -474,24 +480,41 @@ def update_data(n_clicks1, n_clicks2, contents2):
                             pass
                 logging.debug("wrote to_fasta to " + in_file_fasta)
 
+                # figure out the number of theads for clustalo
+                threads = multiprocessing.cpu_count()
+                if threads < 1:
+                    threads = 1
+                elif threads > 8:
+                    threads = 8
+                logging.debug("clustalo threads: " + str(threads))
+
+                # run clustalo the first time to get the clu file
                 logging.debug("running clustalo with input: " + in_file_fasta)
-                subprocess.run(["clustalo", "-i", in_file_fasta, "-o", out_file_clu, "--outfmt", "clu", "--threads", "8", "-v", "-v", "-v"], 
+                subprocess.run(["clustalo", "-i", in_file_fasta, "-o", out_file_clu, "--outfmt", "clu", "--threads", str(threads), "-v", "-v", "-v"], 
                                text=True, check=True)
                 logging.debug("ran clustalo with output: " + out_file_clu)
 
+                # run clustalo the second time to get the distance matrix file
+                # note: this is set to timeout after 60 seconds because we only need the distance matrix
                 logging.debug("running clustalo with input: " + out_file_clu)
-                subprocess.run(["clustalo", "-i", out_file_clu, "--percent-id", "--distmat-out=" + out_file_pimtxt, "--full", "--threads", "8"],
-                               text=True, check=True)
+                clustalo_timeout = 60
+                try:
+                    subprocess.run(["clustalo", "-i", out_file_clu, "--percent-id", "--distmat-out=" + out_file_pimtxt, "--full", "--threads", str(threads)],
+                                text=True, check=True, timeout=clustalo_timeout)
+                except subprocess.TimeoutExpired:
+                    logging.debug("clustalo timeout after " + str(clustalo_timeout) + " seconds")
                 logging.debug("ran clustalo with output: " + out_file_pimtxt)
 
+                # read the clu/alignment file
                 alignfile = out_file_clu
                 with open(alignfile, "r") as aln:
                     alignment = AlignIO.read(aln, "clustal")
                 logging.debug("loaded alignment from: " + alignfile)
 
+                # read the pim.txt (distance matrix) file
                 df3 = pd.read_csv(out_file_pimtxt, skiprows=1, header=None, delim_whitespace=True)
                 df = df3
-                logging.debug("loaded df: " + str(df))
+                logging.debug("loaded distance matrix df: " + str(df))
 
             except Exception as e:
                 msg = 'An error occurred'
@@ -532,6 +555,8 @@ def update_data(n_clicks1, n_clicks2, contents2):
         newick_string = str(tree)
         temp_node, temp_edge = generate_elements(tree)
         elements = temp_node + temp_edge
+
+        msg = 'Uploaded file processed!'
 
         return msg, fig, elements, newick_string
     else:
