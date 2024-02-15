@@ -22,7 +22,7 @@ import argparse
 import traceback
 from itertools import groupby
 
-import time_utilities as tu
+import time
 
 RUNNING_IN_DOCKER = os.getenv('ALGAEORTHO_DOCKER', 'False').lower() == 'true'
 
@@ -453,15 +453,15 @@ def update_data(n_clicks1, n_clicks2, contents2):
                 #logging.debug(to_fasta.head())
                 logging.debug("created to_fasta")
 
-                time_str = "_" + tu.datetime_now_label()
+                filename = "ortho_" + str(int(time.time()))
                 path = "."
                 if RUNNING_IN_DOCKER:
                     path = "/data"
                 #f = io.StringIO()
 
-                in_file_fasta = path + "/ortho" + time_str + ".fasta"
-                out_file_clu = path + "/ortho" + time_str + ".clu"
-                out_file_pimtxt = path + "/ortho" + time_str + ".pim.txt"    
+                in_file_fasta = path + "/" + filename + ".fasta"
+                out_file_clu = path + "/" + filename + ".clu"
+                out_file_pimtxt = path + "/" + filename + ".pim.txt"
                 
                 with open(in_file_fasta, 'w') as f:
                     for index, row in to_fasta.iterrows():
