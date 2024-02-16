@@ -350,21 +350,16 @@ def download_data(n_clicks):
     return [dcc.send_file(selected_dl_file)]
 
 @app.callback(
-    # [# Output('container-button-timestamp', 'children'),
-    # Output('graph', 'figure')],
     [Output('container-button-timestamp', 'children'),
-     # Output('output-data-upload', 'children'),
      Output('graph', 'figure'),
-     # Output('table', 'data'),
      Output('cytoscape-usage-phylogeny', 'elements'),
      Output('textarea-example-output', 'children'),
-     # Output("download-dataframe-csv", "data")
-     ],
+     # https://stackoverflow.com/questions/62375102/problem-dropping-same-file-twice-in-a-row
+     Output('upload-data', 'contents'),
+     Output('upload-data', 'filename')],
     [Input('button1', 'n_clicks'),
      Input('button2', 'n_clicks'),
-     # Input("btn-download-txt", "n_clicks"),
      Input('upload-data', 'contents'),
-     # Input('textarea-example', 'value')
      Input('run_clustalo_option', 'value')
      ],
     prevent_initial_call=True
@@ -376,7 +371,7 @@ def update_data(n_clicks1, n_clicks2, upload_contents, run_clustalo_option):
                   " run_clustalo_option:" + str(run_clustalo_option))
     global df_to_merge_loaded
     global selected_dl_file
-    
+
     logging.debug("df_to_merge loaded: " + str(df_to_merge_loaded))
     
     df1 = pd.read_csv("hs2.pim.txt", skiprows=1, header=None, delim_whitespace=True)
@@ -524,7 +519,7 @@ def update_data(n_clicks1, n_clicks2, upload_contents, run_clustalo_option):
                     # msg_fig = ff.create_table([[msg],[long_msg]], height_constant=20)
                     # msg_fig.layout.annotations[0].font.size = 20
                     
-                    return msg, no_update, [], long_msg
+                    return msg, no_update, [], long_msg, None, None
 
                 else:
                     # figure out the number of theads for clustalo
@@ -583,7 +578,7 @@ def update_data(n_clicks1, n_clicks2, upload_contents, run_clustalo_option):
                 error_fig = ff.create_table([[msg],[long_msg]], height_constant=20)
                 # Make text size larger
                 error_fig.layout.annotations[0].font.size = 20
-                return msg, error_fig, [], long_msg
+                return msg, error_fig, [], long_msg, None, None
 
 
     if not df.empty:
@@ -611,9 +606,9 @@ def update_data(n_clicks1, n_clicks2, upload_contents, run_clustalo_option):
         temp_node, temp_edge = generate_elements(tree)
         elements = temp_node + temp_edge
 
-        return msg, fig, elements, newick_string
+        return msg, fig, elements, newick_string, None, None
     else:
-        return no_update
+        return no_update, no_update, no_update, no_update, None, None
     #    break
 
 
