@@ -15,16 +15,15 @@ import dash_cytoscape as cyto
 from Bio.Phylo.TreeConstruction import DistanceCalculator
 from Bio.Phylo.TreeConstruction import DistanceTreeConstructor
 
-import subprocess
-import logging
-import pickle
+import time
 import argparse
+import logging
+import multiprocessing
+import subprocess
+import pickle
+import zipfile
 import traceback
 from itertools import groupby
-
-import time
-import multiprocessing
-import zipfile
 
 RUNNING_IN_DOCKER = os.getenv('ALGAEORTHO_DOCKER', 'False').lower() == 'true'
 
@@ -34,8 +33,10 @@ logging.debug("Starting AlgaeOrtho App...")
 # Original Input File will be the results from SonicParanoid
 #
 
+# globals
 df_to_merge = pd.DataFrame()
 df_to_merge_loaded = False
+selected_dl_file = "./hs2.pim.txt"
 
 def load_shapes():
     # Start incorporating backend:
@@ -284,10 +285,17 @@ sidebar = html.Div(
                 'borderStyle': 'dashed',
                 'borderRadius': '5px',
                 'textAlign': 'center',
-                'margin': '10px'
+                'margin': '10px',
+                'cursor': 'pointer'
             },
             # Allow multiple files to be uploaded
             multiple=False
+        ),
+        dcc.Checklist(
+            ['Run Clustal Omega (can be slow)'],
+            ['Run Clustal Omega (can be slow)'],
+            id="run_clustalo_option",
+            inline=True
         ),
         html.Hr(),
 
@@ -306,7 +314,7 @@ app.layout = html.Div(children=[
     ]),
     dbc.Row([
         dbc.Col(),
-        dbc.Col([html.Button("Download Percent Identity Matrix", id="btn-download-txt", n_clicks=0),
+        dbc.Col([html.Button("Download Results", id="btn-download-txt", n_clicks=0),
                  dcc.Download(id="download-pim-txt")])
     ]),
     dbc.Row([
@@ -329,7 +337,6 @@ app.layout = html.Div(children=[
     ]),
 ])
 
-selected_dl_file = "./hs2.pim.txt"
 
 # upload data table info
 @app.callback(
@@ -355,25 +362,28 @@ def download_data(n_clicks):
      ],
     [Input('button1', 'n_clicks'),
      Input('button2', 'n_clicks'),
-    #  Input("btn-download-txt", "n_clicks"),
-     Input('upload-data', 'contents')
+     # Input("btn-download-txt", "n_clicks"),
+     Input('upload-data', 'contents'),
      # Input('textarea-example', 'value')
+     Input('run_clustalo_option', 'value')
      ],
     prevent_initial_call=True
 )
-def update_data(n_clicks1, n_clicks2, contents2):
+def update_data(n_clicks1, n_clicks2, upload_contents, run_clustalo_option):
     logging.debug("update_data - n_clicks1:" + str(n_clicks1) + 
                   " n_clicks2:" + str(n_clicks2) + 
-                  " contents2:" + str(contents2))
+                  " contents2:" + str(upload_contents),
+                  " run_clustalo_option:" + str(run_clustalo_option))
     global df_to_merge_loaded
+    global selected_dl_file
+    
     logging.debug("df_to_merge loaded: " + str(df_to_merge_loaded))
     
     df1 = pd.read_csv("hs2.pim.txt", skiprows=1, header=None, delim_whitespace=True)
     df2 = pd.read_csv("lyco_ochr.pim.txt", skiprows=1, header=None, delim_whitespace=True)
     button_id = ctx.triggered[0]['prop_id'].split(".")[0]
-    print("button_id: "+button_id)
+    logging.debug("button_id: " + button_id)
     
-    global selected_dl_file
     df = pd.DataFrame()
 
     if button_id == "button1":
@@ -390,6 +400,11 @@ def update_data(n_clicks1, n_clicks2, contents2):
         with open(alignfile, "r") as aln:
             alignment = AlignIO.read(aln, "clustal")
         msg = "LycoCyclase clicked"
+    elif button_id == "run_clustalo_option":
+        if len(run_clustalo_option) == 0:
+            msg = "Clustalo option disabled"
+        else:
+            msg = "Clustalo option enabled"
     # elif button_id == "btn-download-txt":
     #     msg = "Download clicked"
 
@@ -397,9 +412,9 @@ def update_data(n_clicks1, n_clicks2, contents2):
     # Will have the user text input the location of the first one! And then it will look for the fasta files relatively to this, as well as
 
     else:
-        if contents2 is not None and df_to_merge_loaded:
+        if upload_contents is not None and df_to_merge_loaded:
             try:
-                content_type, content_string = contents2.split(",")
+                content_type, content_string = upload_contents.split(",")
                 decoded = base64.b64decode(content_string)
                 decoded = decoded.decode('utf-8').replace("\\n", "\n")
                 fasta_sio = io.StringIO(decoded)
@@ -501,51 +516,60 @@ def update_data(n_clicks1, n_clicks2, contents2):
 
                 selected_dl_file = in_file_fasta
 
-                ###### split here for clustalo ######
+                # run clustalo ONLY if the option is selected
+                # otherwise, just return the fasta file
+                if len(run_clustalo_option) == 0:
+                    msg = 'Merged fasta file created'
+                    long_msg = 'Merged fasta file created, clustalo not run. Merged fasta can be downloaded using the button.'
+                    # msg_fig = ff.create_table([[msg],[long_msg]], height_constant=20)
+                    # msg_fig.layout.annotations[0].font.size = 20
+                    
+                    return msg, no_update, [], long_msg
 
-                # figure out the number of theads for clustalo
-                threads = multiprocessing.cpu_count()
-                if threads < 1:
-                    threads = 1
-                elif threads > 8:
-                    threads = 8
-                logging.debug("clustalo threads: " + str(threads))
+                else:
+                    # figure out the number of theads for clustalo
+                    threads = multiprocessing.cpu_count()
+                    if threads < 1:
+                        threads = 1
+                    elif threads > 8:
+                        threads = 8
+                    logging.debug("clustalo threads: " + str(threads))
 
-                # run clustalo the first time to get the clu file
-                logging.debug("running clustalo with input: " + in_file_fasta)
-                subprocess.run(["clustalo", "-i", in_file_fasta, "-o", out_file_clu, "--outfmt", "clu", "--threads", str(threads), "-v", "-v", "-v"], 
-                               text=True, check=True)
-                logging.debug("ran clustalo with output: " + out_file_clu)
+                    # run clustalo the first time to get the clu file
+                    logging.debug("running clustalo with input: " + in_file_fasta)
+                    subprocess.run(["clustalo", "-i", in_file_fasta, "-o", out_file_clu, "--outfmt", "clu", "--threads", str(threads), "-v", "-v", "-v"], 
+                                text=True, check=True)
+                    logging.debug("ran clustalo with output: " + out_file_clu)
 
-                # run clustalo the second time to get the distance matrix file
-                # from docs: if no alignment is desired but only distance calculation and tree construction, 
-                #            then --max-hmm-iterations=-1 will terminate the calculation before the alignment stage
-                logging.debug("running clustalo with input: " + out_file_clu)
-                subprocess.run(["clustalo", "-i", out_file_clu, "--percent-id", "--distmat-out=" + out_file_pimtxt, "--full", "--max-hmm-iterations=-1"],
-                            text=True, check=True)
-                logging.debug("ran clustalo with output: " + out_file_pimtxt)
+                    # run clustalo the second time to get the distance matrix file
+                    # from docs: if no alignment is desired but only distance calculation and tree construction, 
+                    #            then --max-hmm-iterations=-1 will terminate the calculation before the alignment stage
+                    logging.debug("running clustalo with input: " + out_file_clu)
+                    subprocess.run(["clustalo", "-i", out_file_clu, "--percent-id", "--distmat-out=" + out_file_pimtxt, "--full", "--max-hmm-iterations=-1"],
+                                text=True, check=True)
+                    logging.debug("ran clustalo with output: " + out_file_pimtxt)
 
-                # read the clu/alignment file
-                alignfile = out_file_clu
-                with open(alignfile, "r") as aln:
-                    alignment = AlignIO.read(aln, "clustal")
-                logging.debug("loaded alignment from: " + alignfile)
+                    # read the clu/alignment file
+                    alignfile = out_file_clu
+                    with open(alignfile, "r") as aln:
+                        alignment = AlignIO.read(aln, "clustal")
+                    logging.debug("loaded alignment from: " + alignfile)
 
-                # read the pim.txt (distance matrix) file
-                df3 = pd.read_csv(out_file_pimtxt, skiprows=1, header=None, delim_whitespace=True)
-                df = df3
-                selected_dl_file = out_file_pimtxt
-                logging.debug("loaded distance matrix df: " + str(df))
+                    # read the pim.txt (distance matrix) file
+                    df3 = pd.read_csv(out_file_pimtxt, skiprows=1, header=None, delim_whitespace=True)
+                    df = df3
+                    selected_dl_file = out_file_pimtxt
+                    logging.debug("loaded distance matrix df: " + str(df))
 
-                # zip up the outputs
-                with zipfile.ZipFile(out_file_zip, 'w') as outzip:
-                    outzip.write(in_file_fasta)
-                    outzip.write(out_file_clu)
-                    outzip.write(out_file_pimtxt)
-                    logging.debug("zipped output files: " + out_file_zip)
-                    selected_dl_file = out_file_zip
+                    # zip up the outputs
+                    with zipfile.ZipFile(out_file_zip, 'w') as outzip:
+                        outzip.write(in_file_fasta)
+                        outzip.write(out_file_clu)
+                        outzip.write(out_file_pimtxt)
+                        logging.debug("zipped output files: " + out_file_zip)
+                        selected_dl_file = out_file_zip
 
-                msg = 'Uploaded file processed!'
+                    msg = 'Uploaded file processed'
 
             except Exception as e:
                 msg = 'An error occurred'
