@@ -299,6 +299,9 @@ sidebar = html.Div(
         ),
         html.Hr(),
 
+        html.Button("Download results", id="btn-download-txt", n_clicks=0),
+        dcc.Download(id="download-txt"),
+
     ],
     style=SIDEBAR_STYLE,
 )
@@ -306,17 +309,28 @@ sidebar = html.Div(
 app.layout = html.Div(children=[
     dbc.Row([
         dbc.Col(sidebar),
-        dbc.Col(html.H1(children='AlgaeOrtho'))
+        dbc.Col(html.H1(children='AlgaeOrtho')),
+    ]),
+    dbc.Row([
+        dbc.Col(),
+        dbc.Col(dcc.Loading(
+            id="loading-1",
+            type="default",
+            children=html.Div(
+                id="loading-output-1",
+                style={'width': '100%', 'height': '5vh'}
+            )
+        ))
     ]),
     dbc.Row([
         dbc.Col(),
         dbc.Col(dcc.Graph(id='graph', style={'width': '100%', 'height': '90vh'}))
     ]),
-    dbc.Row([
-        dbc.Col(),
-        dbc.Col([html.Button("Download Results", id="btn-download-txt", n_clicks=0),
-                 dcc.Download(id="download-pim-txt")])
-    ]),
+    # dbc.Row([
+    #     dbc.Col(),
+    #     dbc.Col([html.Button("Download Results", id="btn-download-txt", n_clicks=0),
+    #              dcc.Download(id="download-txt")])
+    # ]),
     dbc.Row([
         dbc.Col(),
         dbc.Col(cyto.Cytoscape(
@@ -340,7 +354,7 @@ app.layout = html.Div(children=[
 
 # upload data table info
 @app.callback(
-    [Output("download-pim-txt", "data")],
+    [Output("download-txt", "data")],
     [Input("btn-download-txt", "n_clicks")],
     prevent_initial_call=True
 )
@@ -356,7 +370,8 @@ def download_data(n_clicks):
      Output('textarea-example-output', 'children'),
      # https://stackoverflow.com/questions/62375102/problem-dropping-same-file-twice-in-a-row
      Output('upload-data', 'contents'),
-     Output('upload-data', 'filename')],
+     Output('upload-data', 'filename'),
+     Output("loading-output-1", "children")],
     [Input('button1', 'n_clicks'),
      Input('button2', 'n_clicks'),
      Input('upload-data', 'contents'),
@@ -387,14 +402,14 @@ def update_data(n_clicks1, n_clicks2, upload_contents, run_clustalo_option):
         alignfile = "hs2.clu"
         with open(alignfile, "r") as aln:
             alignment = AlignIO.read(aln, "clustal")
-        msg = "bZIP1 clicked"
+        msg = "bZIP1 PIM ready for download"
     elif button_id == "button2":
         df = df2
         selected_dl_file = "./lyco_ochr.pim.txt"
         alignfile = "lyco_ochr.clu"
         with open(alignfile, "r") as aln:
             alignment = AlignIO.read(aln, "clustal")
-        msg = "LycoCyclase clicked"
+        msg = "LycoCyclase PIM ready for download"
     elif button_id == "run_clustalo_option":
         if len(run_clustalo_option) == 0:
             msg = "Clustalo option disabled"
@@ -514,12 +529,12 @@ def update_data(n_clicks1, n_clicks2, upload_contents, run_clustalo_option):
                 # run clustalo ONLY if the option is selected
                 # otherwise, just return the fasta file
                 if len(run_clustalo_option) == 0:
-                    msg = 'Merged fasta file created'
+                    msg = 'Merged fasta file ready for download'
                     long_msg = 'Merged fasta file created, clustalo not run. Merged fasta can be downloaded using the button.'
                     # msg_fig = ff.create_table([[msg],[long_msg]], height_constant=20)
                     # msg_fig.layout.annotations[0].font.size = 20
                     
-                    return msg, no_update, [], long_msg, None, None
+                    return msg, no_update, [], long_msg, None, None, no_update
 
                 else:
                     # figure out the number of theads for clustalo
@@ -564,7 +579,8 @@ def update_data(n_clicks1, n_clicks2, upload_contents, run_clustalo_option):
                         logging.debug("zipped output files: " + out_file_zip)
                         selected_dl_file = out_file_zip
 
-                    msg = 'Uploaded file processed'
+                    msg = 'Full results ready for download'
+                    long_msg = 'Merged fasta file created, clustalo run and alignment created. Results zip can be downloaded using the button.'
 
             except Exception as e:
                 msg = 'An error occurred'
@@ -578,7 +594,7 @@ def update_data(n_clicks1, n_clicks2, upload_contents, run_clustalo_option):
                 error_fig = ff.create_table([[msg],[long_msg]], height_constant=20)
                 # Make text size larger
                 error_fig.layout.annotations[0].font.size = 20
-                return msg, error_fig, [], long_msg, None, None
+                return msg, error_fig, [], long_msg, None, None, no_update
 
 
     if not df.empty:
@@ -606,9 +622,9 @@ def update_data(n_clicks1, n_clicks2, upload_contents, run_clustalo_option):
         temp_node, temp_edge = generate_elements(tree)
         elements = temp_node + temp_edge
 
-        return msg, fig, elements, newick_string, None, None
+        return msg, fig, elements, newick_string, None, None, no_update
     else:
-        return no_update, no_update, no_update, no_update, None, None
+        return no_update, no_update, no_update, no_update, None, None, no_update
     #    break
 
 
