@@ -584,7 +584,7 @@ def update_data(n_clicks1, n_clicks2, upload_contents, run_clustalo_option):
 
             except Exception as e:
                 msg = 'An error occurred'
-                long_msg = 'An error occurred. Please check your input file and try again. Refresh the page if the error persists.'
+                long_msg = 'An error occurred. Please check your input file, refresh the page, and try again.'
                 #logging.error(long_msg)
                 logging.error(str(e))
                 # print stack trace 
