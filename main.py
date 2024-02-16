@@ -329,7 +329,7 @@ app.layout = html.Div(children=[
     ]),
 ])
 
-selected_pim = "./hs2.pim.txt"
+selected_dl_file = "./hs2.pim.txt"
 
 # upload data table info
 @app.callback(
@@ -339,8 +339,8 @@ selected_pim = "./hs2.pim.txt"
 )
 def download_data(n_clicks):
     logging.debug("download_data - n_clicks:" + str(n_clicks))
-    global selected_pim
-    return [dcc.send_file(selected_pim)]
+    global selected_dl_file
+    return [dcc.send_file(selected_dl_file)]
 
 @app.callback(
     # [# Output('container-button-timestamp', 'children'),
@@ -373,19 +373,19 @@ def update_data(n_clicks1, n_clicks2, contents2):
     button_id = ctx.triggered[0]['prop_id'].split(".")[0]
     print("button_id: "+button_id)
     
-    global selected_pim
+    global selected_dl_file
     df = pd.DataFrame()
 
     if button_id == "button1":
         df = df1
-        selected_pim = "./hs2.pim.txt"
+        selected_dl_file = "./hs2.pim.txt"
         alignfile = "hs2.clu"
         with open(alignfile, "r") as aln:
             alignment = AlignIO.read(aln, "clustal")
         msg = "bZIP1 clicked"
     elif button_id == "button2":
         df = df2
-        selected_pim = "./lyco_ochr.pim.txt"
+        selected_dl_file = "./lyco_ochr.pim.txt"
         alignfile = "lyco_ochr.clu"
         with open(alignfile, "r") as aln:
             alignment = AlignIO.read(aln, "clustal")
@@ -499,7 +499,7 @@ def update_data(n_clicks1, n_clicks2, contents2):
                             pass
                 logging.debug("wrote to_fasta to " + in_file_fasta)
 
-                selected_pim = in_file_fasta
+                selected_dl_file = in_file_fasta
 
                 ###### split here for clustalo ######
 
@@ -534,6 +534,7 @@ def update_data(n_clicks1, n_clicks2, contents2):
                 # read the pim.txt (distance matrix) file
                 df3 = pd.read_csv(out_file_pimtxt, skiprows=1, header=None, delim_whitespace=True)
                 df = df3
+                selected_dl_file = out_file_pimtxt
                 logging.debug("loaded distance matrix df: " + str(df))
 
                 # zip up the outputs
@@ -541,8 +542,8 @@ def update_data(n_clicks1, n_clicks2, contents2):
                     outzip.write(in_file_fasta)
                     outzip.write(out_file_clu)
                     outzip.write(out_file_pimtxt)
-                logging.debug("zipped output files: " + out_file_zip)
-                selected_pim = out_file_zip
+                    logging.debug("zipped output files: " + out_file_zip)
+                    selected_dl_file = out_file_zip
 
                 msg = 'Uploaded file processed!'
 
