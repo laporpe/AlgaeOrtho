@@ -3,7 +3,7 @@
 import os
 import base64
 import io
-from dash import Dash, html, dcc, Input, Output, ctx, dash_table, no_update
+from dash import Dash, html, dcc, Input, Output, ctx, dash_table, no_update, callback
 import dash_bootstrap_components as dbc
 from dash_bootstrap_templates import load_figure_template
 import pandas as pd
@@ -303,11 +303,11 @@ app.layout = html.Div(children=[
         dbc.Col(),
         dbc.Col(dcc.Graph(id='graph', style={'width': '100%', 'height': '90vh'}))
     ]),
-    # dbc.Row([
-    #     dbc.Col(),
-    #     dbc.Col([html.Button("Download Percent Identity Matrix", id="btn-download-txt"),
-    #              dcc.Download(id="table")])
-    # ]),
+    dbc.Row([
+        dbc.Col(),
+        dbc.Col([html.Button("Download Percent Identity Matrix", id="btn-download-txt", n_clicks=0),
+                 dcc.Download(id="download-text")])
+    ]),
     dbc.Row([
         dbc.Col(),
         dbc.Col(cyto.Cytoscape(
@@ -328,9 +328,18 @@ app.layout = html.Div(children=[
     ]),
 ])
 
+selected_pim = "./hs2.pim.txt"
 
 # upload data table info
-
+@app.callback(
+    [Output("download-text", "data")],
+    [Input("btn-download-txt", "n_clicks")],
+    prevent_initial_call=True
+)
+def download_data(n_clicks):
+    logging.debug("download_data - n_clicks:" + str(n_clicks))
+    global selected_pim
+    return [dcc.send_file(selected_pim)]
 
 @app.callback(
     # [# Output('container-button-timestamp', 'children'),
@@ -339,12 +348,13 @@ app.layout = html.Div(children=[
      # Output('output-data-upload', 'children'),
      Output('graph', 'figure'),
      # Output('table', 'data'),
-     # Output("download-dataframe-csv", "data"),
      Output('cytoscape-usage-phylogeny', 'elements'),
-     Output('textarea-example-output', 'children')],
+     Output('textarea-example-output', 'children'),
+     # Output("download-dataframe-csv", "data")
+     ],
     [Input('button1', 'n_clicks'),
      Input('button2', 'n_clicks'),
-     # Input("btn-download-txt", "n_clicks3"),
+    #  Input("btn-download-txt", "n_clicks"),
      Input('upload-data', 'contents')
      # Input('textarea-example', 'value')
      ],
@@ -361,20 +371,27 @@ def update_data(n_clicks1, n_clicks2, contents2):
     df2 = pd.read_csv("lyco_ochr.pim.txt", skiprows=1, header=None, delim_whitespace=True)
     button_id = ctx.triggered[0]['prop_id'].split(".")[0]
     print("button_id: "+button_id)
+    
+    global selected_pim
     df = pd.DataFrame()
 
     if button_id == "button1":
         df = df1
+        selected_pim = "./hs2.pim.txt"
         alignfile = "hs2.clu"
         with open(alignfile, "r") as aln:
             alignment = AlignIO.read(aln, "clustal")
         msg = "bZIP1 clicked"
     elif button_id == "button2":
         df = df2
+        selected_pim = "./lyco_ochr.pim.txt"
         alignfile = "lyco_ochr.clu"
         with open(alignfile, "r") as aln:
             alignment = AlignIO.read(aln, "clustal")
         msg = "LycoCyclase clicked"
+    # elif button_id == "btn-download-txt":
+    #     msg = "Download clicked"
+
     # create fig
     # Will have the user text input the location of the first one! And then it will look for the fasta files relatively to this, as well as
 
@@ -480,6 +497,8 @@ def update_data(n_clicks1, n_clicks2, contents2):
                             pass
                 logging.debug("wrote to_fasta to " + in_file_fasta)
 
+                ###### split here for clustalo ######
+
                 # figure out the number of theads for clustalo
                 threads = multiprocessing.cpu_count()
                 if threads < 1:
@@ -495,14 +514,11 @@ def update_data(n_clicks1, n_clicks2, contents2):
                 logging.debug("ran clustalo with output: " + out_file_clu)
 
                 # run clustalo the second time to get the distance matrix file
-                # note: this is set to timeout after 60 seconds because we only need the distance matrix
+                # from docs: if no alignment is desired but only distance calculation and tree construction, 
+                #            then --max-hmm-iterations=-1 will terminate the calculation before the alignment stage
                 logging.debug("running clustalo with input: " + out_file_clu)
-                clustalo_timeout = 60
-                try:
-                    subprocess.run(["clustalo", "-i", out_file_clu, "--percent-id", "--distmat-out=" + out_file_pimtxt, "--full", "--threads", str(threads)],
-                                text=True, check=True, timeout=clustalo_timeout)
-                except subprocess.TimeoutExpired:
-                    logging.debug("clustalo timeout after " + str(clustalo_timeout) + " seconds")
+                subprocess.run(["clustalo", "-i", out_file_clu, "--percent-id", "--distmat-out=" + out_file_pimtxt, "--full", "--max-hmm-iterations=-1"],
+                            text=True, check=True)
                 logging.debug("ran clustalo with output: " + out_file_pimtxt)
 
                 # read the clu/alignment file
@@ -514,7 +530,10 @@ def update_data(n_clicks1, n_clicks2, contents2):
                 # read the pim.txt (distance matrix) file
                 df3 = pd.read_csv(out_file_pimtxt, skiprows=1, header=None, delim_whitespace=True)
                 df = df3
+                selected_pim = out_file_pimtxt
                 logging.debug("loaded distance matrix df: " + str(df))
+
+                msg = 'Uploaded file processed!'
 
             except Exception as e:
                 msg = 'An error occurred'
@@ -555,8 +574,6 @@ def update_data(n_clicks1, n_clicks2, contents2):
         newick_string = str(tree)
         temp_node, temp_edge = generate_elements(tree)
         elements = temp_node + temp_edge
-
-        msg = 'Uploaded file processed!'
 
         return msg, fig, elements, newick_string
     else:
