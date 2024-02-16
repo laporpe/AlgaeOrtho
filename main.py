@@ -616,7 +616,7 @@ def update_data(n_clicks1, n_clicks2, upload_contents, run_clustalo_option):
 
 
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser(description='Process some integers.')
+    parser = argparse.ArgumentParser(description='AlgaeOrtho')
     
     # noserver mode will perform the pickle file logic only, it won't start the server
     # this is used mainly for the docker image. the pickle file will be created during
