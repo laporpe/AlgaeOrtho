@@ -24,6 +24,7 @@ from itertools import groupby
 
 import time
 import multiprocessing
+import zipfile
 
 RUNNING_IN_DOCKER = os.getenv('ALGAEORTHO_DOCKER', 'False').lower() == 'true'
 
@@ -306,7 +307,7 @@ app.layout = html.Div(children=[
     dbc.Row([
         dbc.Col(),
         dbc.Col([html.Button("Download Percent Identity Matrix", id="btn-download-txt", n_clicks=0),
-                 dcc.Download(id="download-text")])
+                 dcc.Download(id="download-pim-txt")])
     ]),
     dbc.Row([
         dbc.Col(),
@@ -332,7 +333,7 @@ selected_pim = "./hs2.pim.txt"
 
 # upload data table info
 @app.callback(
-    [Output("download-text", "data")],
+    [Output("download-pim-txt", "data")],
     [Input("btn-download-txt", "n_clicks")],
     prevent_initial_call=True
 )
@@ -484,6 +485,7 @@ def update_data(n_clicks1, n_clicks2, contents2):
                 in_file_fasta = path + "/" + filename + ".fasta"
                 out_file_clu = path + "/" + filename + ".clu"
                 out_file_pimtxt = path + "/" + filename + ".pim.txt"
+                out_file_zip = path + "/" + filename + ".zip"
                 
                 # write the fasta file
                 with open(in_file_fasta, 'w') as f:
@@ -496,6 +498,8 @@ def update_data(n_clicks1, n_clicks2, contents2):
                             #logging.error("error writing to_fasta: " + str(e))
                             pass
                 logging.debug("wrote to_fasta to " + in_file_fasta)
+
+                selected_pim = in_file_fasta
 
                 ###### split here for clustalo ######
 
@@ -530,8 +534,15 @@ def update_data(n_clicks1, n_clicks2, contents2):
                 # read the pim.txt (distance matrix) file
                 df3 = pd.read_csv(out_file_pimtxt, skiprows=1, header=None, delim_whitespace=True)
                 df = df3
-                selected_pim = out_file_pimtxt
                 logging.debug("loaded distance matrix df: " + str(df))
+
+                # zip up the outputs
+                with zipfile.ZipFile(out_file_zip, 'w') as outzip:
+                    outzip.write(in_file_fasta)
+                    outzip.write(out_file_clu)
+                    outzip.write(out_file_pimtxt)
+                logging.debug("zipped output files: " + out_file_zip)
+                selected_pim = out_file_zip
 
                 msg = 'Uploaded file processed!'
 
