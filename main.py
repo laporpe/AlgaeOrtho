@@ -530,11 +530,16 @@ def update_data(n_clicks1, n_clicks2, upload_contents, run_clustalo_option):
                 # otherwise, just return the fasta file
                 if len(run_clustalo_option) == 0:
                     msg = 'Merged fasta file ready for download'
-                    long_msg = 'Merged fasta file created, clustalo not run. Merged fasta can be downloaded using the button.'
+                    long_msg = 'Merged fasta file created, clustalo not run. Merged fasta can be downloaded using the "Download Results" button.'
                     # msg_fig = ff.create_table([[msg],[long_msg]], height_constant=20)
                     # msg_fig.layout.annotations[0].font.size = 20
                     
-                    return msg, no_update, [], long_msg, None, None, no_update
+                    # Create an empty matrix
+                    z_data = [[0]]
+                    # Create empty annotated heatmap figure
+                    fig = ff.create_annotated_heatmap(z=z_data, colorscale='deep')
+                    fig.update_layout(title=msg)
+                    return msg, fig, [], long_msg, None, None, no_update
 
                 else:
                     # figure out the number of theads for clustalo
