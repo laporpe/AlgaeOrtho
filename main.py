@@ -27,6 +27,12 @@ from itertools import groupby
 
 RUNNING_IN_DOCKER = os.getenv('ALGAEORTHO_DOCKER', 'False').lower() == 'true'
 
+# if the app is running in a docker container, the path is different
+# note: there is a leading dot in the local path
+data_path = "./data"
+if RUNNING_IN_DOCKER:
+    data_path = "/data"
+
 logging.basicConfig(level=logging.DEBUG, format='%(asctime)s %(message)s')
 logging.debug("Starting AlgaeOrtho App...")
 
@@ -80,6 +86,13 @@ def load_df_to_merge():
     #df_to_merge = concise_df[["group_id", "species", "proteinId"]]
     return concise_df[["group_id", "species", "proteinId"]]
 
+def generate_tree_from_alignment(alignment):
+    calculator = DistanceCalculator('identity', )
+    #distance_matrix = calculator.get_distance(alignment)
+    constructor = DistanceTreeConstructor(calculator)
+    tree = constructor.build_tree(alignment)
+    return tree
+
 load_figure_template('COSMO')
 layout = {'name': 'preset'}
 external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
@@ -122,12 +135,14 @@ with open("lyco_ochr.clu", "r") as aln:
     logging.debug("loading lyco_ochr.clu...")
     alignment = AlignIO.read(aln, "clustal")
 
-calculator = DistanceCalculator('identity', )
-distance_matrix = calculator.get_distance(alignment)
-constructor = DistanceTreeConstructor(calculator)
-tree = constructor.build_tree(alignment)
-
+tree = generate_tree_from_alignment(alignment)
 newick_string = str(tree)
+
+# calculator = DistanceCalculator('identity', )
+# distance_matrix = calculator.get_distance(alignment)
+# constructor = DistanceTreeConstructor(calculator)
+# tree = constructor.build_tree(alignment)
+# newick_string = str(tree)
 
 
 def generate_elements(tree, xlen=30, ylen=30, grabbable=False):
@@ -402,14 +417,46 @@ def update_data(n_clicks1, n_clicks2, upload_contents, run_clustalo_option):
         alignfile = "hs2.clu"
         with open(alignfile, "r") as aln:
             alignment = AlignIO.read(aln, "clustal")
+            tree = generate_tree_from_alignment(alignment)
+            has_tree = False
+            out_file_treetxt = data_path + "/hs2.tree.txt"
+            with open(out_file_treetxt, "w") as tree_file:
+                tree_file.write(str(tree))
+                has_tree = True
+        # zip up the outputs
+        out_file_zip = data_path + "/hs2.zip"
+        with zipfile.ZipFile(out_file_zip, 'w') as outzip:
+            outzip.write(alignfile)
+            outzip.write(selected_dl_file)
+            if has_tree:
+                outzip.write(out_file_treetxt, "hs2.tree.txt")
+            logging.debug("zipped output files: " + out_file_zip)
+            selected_dl_file = out_file_zip
         msg = "bZIP1 PIM ready for download"
+    
     elif button_id == "button2":
         df = df2
         selected_dl_file = "./lyco_ochr.pim.txt"
         alignfile = "lyco_ochr.clu"
         with open(alignfile, "r") as aln:
             alignment = AlignIO.read(aln, "clustal")
+            tree = generate_tree_from_alignment(alignment)
+            has_tree = False
+            out_file_treetxt = data_path + "/lyco_ochr.tree.txt"
+            with open(out_file_treetxt, "w") as tree_file:
+                tree_file.write(str(tree))
+                has_tree = True
+        # zip up the outputs
+        out_file_zip = data_path + "/lyco_ochr.zip"
+        with zipfile.ZipFile(out_file_zip, 'w') as outzip:
+            outzip.write(alignfile)
+            outzip.write(selected_dl_file)
+            if has_tree:
+                outzip.write(out_file_treetxt, "lyco_ochr.tree.txt")
+            logging.debug("zipped output files: " + out_file_zip)
+            selected_dl_file = out_file_zip
         msg = "LycoCyclase PIM ready for download"
+    
     elif button_id == "run_clustalo_option":
         if len(run_clustalo_option) == 0:
             msg = "Clustalo option disabled"
@@ -499,18 +546,13 @@ def update_data(n_clicks1, n_clicks2, upload_contents, run_clustalo_option):
 
                 # get a unique filename
                 filename = "ortho_" + str(int(time.time()))
-                # if the app is running in a docker container, the path is different
-                # note: there is a leading dot in the local path
-                path = "./data"
-                if RUNNING_IN_DOCKER:
-                    path = "/data"
-                #f = io.StringIO()
 
                 # get the full path of each file
-                in_file_fasta = path + "/" + filename + ".fasta"
-                out_file_clu = path + "/" + filename + ".clu"
-                out_file_pimtxt = path + "/" + filename + ".pim.txt"
-                out_file_zip = path + "/" + filename + ".zip"
+                in_file_fasta = data_path + "/" + filename + ".fasta"
+                out_file_clu = data_path + "/" + filename + ".clu"
+                out_file_pimtxt = data_path + "/" + filename + ".pim.txt"
+                out_file_treetxt = data_path + "/" + filename + ".tree.txt"
+                out_file_zip = data_path + "/" + filename + ".zip"
                 
                 # write the fasta file
                 with open(in_file_fasta, 'w') as f:
@@ -566,8 +608,14 @@ def update_data(n_clicks1, n_clicks2, upload_contents, run_clustalo_option):
 
                     # read the clu/alignment file
                     alignfile = out_file_clu
+                    has_tree = False
                     with open(alignfile, "r") as aln:
                         alignment = AlignIO.read(aln, "clustal")
+                        tree = generate_tree_from_alignment(alignment)
+                        with open(out_file_treetxt, "w") as tree_file:
+                            tree_file.write(str(tree))
+                            has_tree = True
+
                     logging.debug("loaded alignment from: " + alignfile)
 
                     # read the pim.txt (distance matrix) file
@@ -581,6 +629,8 @@ def update_data(n_clicks1, n_clicks2, upload_contents, run_clustalo_option):
                         outzip.write(in_file_fasta)
                         outzip.write(out_file_clu)
                         outzip.write(out_file_pimtxt)
+                        if has_tree:
+                            outzip.write(out_file_treetxt)
                         logging.debug("zipped output files: " + out_file_zip)
                         selected_dl_file = out_file_zip
 
@@ -618,22 +668,14 @@ def update_data(n_clicks1, n_clicks2, upload_contents, run_clustalo_option):
 
         # Define elements, stylesheet and layout
         # download this from http://www.phyloxml.org/examples/apaf.xml
-        calculator = DistanceCalculator('identity', )
-        distance_matrix = calculator.get_distance(alignment)
-        constructor = DistanceTreeConstructor(calculator)
-        tree = constructor.build_tree(alignment)
-
-        newick_string = str(tree)
         temp_node, temp_edge = generate_elements(tree)
         elements = temp_node + temp_edge
 
+        newick_string = str(tree)
         return msg, fig, elements, newick_string, None, None, no_update
     else:
         return no_update, no_update, no_update, no_update, None, None, no_update
     #    break
-
-
-
 
 
 if __name__ == '__main__':
