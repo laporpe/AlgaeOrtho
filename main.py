@@ -292,8 +292,8 @@ sidebar = html.Div(
             multiple=False
         ),
         dcc.Checklist(
-            ['Run Clustal Omega (can be slow)'],
-            ['Run Clustal Omega (can be slow)'],
+            ['If unchecked, will produce fasta without visualization. If checked, will run Clustal Omega to visualize fasta (can be slow)'],
+            ['If unchecked, will produce fasta without visualization. If checked, will run Clustal Omega to visualize fasta (can be slow)'],
             id="run_clustalo_option",
             inline=True
         ),
