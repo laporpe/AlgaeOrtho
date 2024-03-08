@@ -540,9 +540,17 @@ def update_data(n_clicks1, n_clicks2, upload_contents, run_clustalo_option):
                 #logging.debug(df_to_merge.head())
                 #logging.debug(to_fasta.head())
                 to_fasta['proteinSeq'] = to_fasta['proteinSeq'].astype(str)
+
+                #if there are two sequences with the same name, only the longer of the two remains.
+                to_fasta.sort_values(by='proteinSeq', key=lambda x: x.str.len(),inplace = True)
+                to_fasta.drop_duplicates(subset='label', keep = 'last',inplace = True)
+
+                logging.debug("removed duplicates")
+
                 # to_fasta['proteinSeq'] = to_fasta['proteinSeq'].str.replace('*', '', regex=True)
                 #logging.debug(to_fasta.head())
                 logging.debug("created to_fasta")
+
 
                 # get a unique filename
                 filename = "ortho_" + str(int(time.time()))
@@ -554,7 +562,8 @@ def update_data(n_clicks1, n_clicks2, upload_contents, run_clustalo_option):
                 out_file_treetxt = data_path + "/" + filename + ".tree.txt"
                 out_file_zip = data_path + "/" + filename + ".zip"
                 
-                # write the fasta file
+            
+    
                 with open(in_file_fasta, 'w') as f:
                     for index, row in to_fasta.iterrows():
                         #logging.debug(str(row))
