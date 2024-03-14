@@ -325,6 +325,7 @@ app.layout = html.Div(children=[
     dbc.Row([
         dbc.Col(sidebar),
         dbc.Col(html.H1(children='AlgaeOrtho')),
+        dbc.Col(html.H3(children='Heatmap (scroll down for tree!)'))
     ]),
     dbc.Row([
         dbc.Col(),
@@ -346,8 +347,10 @@ app.layout = html.Div(children=[
     #     dbc.Col([html.Button("Download Results", id="btn-download-txt", n_clicks=0),
     #              dcc.Download(id="download-txt")])
     # ]),
+
     dbc.Row([
         dbc.Col(),
+        dbc.Col(html.H3(children='Tree'),),
         dbc.Col(cyto.Cytoscape(
             id='cytoscape-usage-phylogeny',
             elements=elements,
@@ -362,6 +365,7 @@ app.layout = html.Div(children=[
 
     dbc.Row([
         dbc.Col(),
+        dbc.Col(html.H3(children='Tree Text (newick)')),
         dbc.Col(html.Div(id='textarea-example-output', style={'whiteSpace': 'break-spaces'}))
     ]),
 ])
