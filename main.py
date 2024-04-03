@@ -321,53 +321,61 @@ sidebar = html.Div(
     style=SIDEBAR_STYLE,
 )
 
+# left column width out of a 12 column grid
+LEFT_COL_WIDTH = 4
+
 app.layout = html.Div(children=[
-    dbc.Row([
-        dbc.Col(sidebar),
-        dbc.Col(html.H1(children='AlgaeOrtho')),
-        dbc.Col(html.H3(children='Heatmap (scroll down for tree!)'))
-    ]),
-    dbc.Row([
-        dbc.Col(),
-        dbc.Col(dcc.Loading(
-            id="loading-1",
-            type="default",
-            children=html.Div(
-                id="loading-output-1",
-                style={'width': '100%', 'height': '5vh'}
-            )
-        ))
-    ]),
-    dbc.Row([
-        dbc.Col(),
-        dbc.Col(dcc.Graph(id='graph', style={'width': '100%', 'height': '90vh'}))
-    ]),
-    # dbc.Row([
-    #     dbc.Col(),
-    #     dbc.Col([html.Button("Download Results", id="btn-download-txt", n_clicks=0),
-    #              dcc.Download(id="download-txt")])
-    # ]),
+    # dbc.Col([
+        dbc.Row([
+            dbc.Col(sidebar, width=LEFT_COL_WIDTH),
+            dbc.Col(html.H1(children='AlgaeOrtho'),width=(12-LEFT_COL_WIDTH)),
+            # dbc.Col(html.H3(children='Heatmap (scroll down for tree!)'))
+        ]),
+        dbc.Row([
+            dbc.Col(width=LEFT_COL_WIDTH),
+            dbc.Col(dcc.Loading(
+                id="loading-1",
+                type="default",
+                children=html.Div(
+                    id="loading-output-1",
+                    style={'width': '100%', 'height': '5vh'}
+                )
+            ),width=(12-LEFT_COL_WIDTH))
+        ]),
+        dbc.Row([
+            dbc.Col(width=LEFT_COL_WIDTH),
+            dbc.Col([html.H3(children='Heatmap (scroll down for tree!)'),
+                    dcc.Graph(id='graph', style={'width': '100%', 'height': '90vh'})],width=(12-LEFT_COL_WIDTH))
+        ]),
+        # dbc.Row([
+        #     dbc.Col(width=LEFT_COL_WIDTH),
+        #     dbc.Col([html.Button("Download Results", id="btn-download-txt", n_clicks=0),
+        #              dcc.Download(id="download-txt")])
+        # ]),
 
-    dbc.Row([
-        dbc.Col(),
-        dbc.Col(html.H3(children='Tree'),),
-        dbc.Col(cyto.Cytoscape(
-            id='cytoscape-usage-phylogeny',
-            elements=elements,
-            stylesheet=stylesheet,
-            layout=layout,
-            style={
-                'height': '95vh',
-                'width': '100%'
-            }
-        ))
-    ]),
+        dbc.Row([
+            dbc.Col(width=LEFT_COL_WIDTH),
+            # dbc.Col(html.H3(children='Tree'),),
+            dbc.Col([html.H3(children='Tree'),
+                cyto.Cytoscape(
+                id='cytoscape-usage-phylogeny',
+                elements=elements,
+                stylesheet=stylesheet,
+                layout=layout,
+                style={
+                    'height': '95vh',
+                    'width': '100%'
+                }
+            )],width=(12-LEFT_COL_WIDTH))
+        ]),
 
-    dbc.Row([
-        dbc.Col(),
-        dbc.Col(html.H3(children='Tree Text (newick)')),
-        dbc.Col(html.Div(id='textarea-example-output', style={'whiteSpace': 'break-spaces'}))
-    ]),
+        dbc.Row([
+            dbc.Col(width=LEFT_COL_WIDTH),
+            # dbc.Col(html.H3(children='Tree Text (newick)')),
+            dbc.Col([html.H3(children='Tree Text (newick)'),
+                html.Div(id='textarea-example-output', style={'whiteSpace': 'break-spaces'})],width=(12-LEFT_COL_WIDTH))
+        ])
+    # ])
 ])
 
 
