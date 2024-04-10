@@ -1,0 +1,15 @@
+# docker-compose.yml
+version: "3"
+services:
+  algaeortho-noclustalo:
+    build:
+      context: .
+      dockerfile: ./Dockerfile-noclustalo
+    image: algaeortho-noclustalo:0.0.1
+    ports:
+      - "8050:8050"
+    volumes:
+      - ./data:/data
+    environment:
+      SERVER_PORT: 8050
+      DASH_DEBUG_MODE: True

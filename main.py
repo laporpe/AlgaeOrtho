@@ -26,6 +26,7 @@ import traceback
 from itertools import groupby
 
 RUNNING_IN_DOCKER = os.getenv('ALGAEORTHO_DOCKER', 'False').lower() == 'true'
+NO_CLUSTALO = os.getenv('ALGAEORTHO_NOCLUSTALO', 'False').lower() == 'true'
 
 # if the app is running in a docker container, the path is different
 # note: there is a leading dot in the local path
@@ -271,6 +272,14 @@ SIDEBAR_STYLE = {
     "backgroundColor": "#7393B3",
 }
 
+# set clustalo check box to disabled if NO_CLUSTALO is set
+clustalo_disabled = False
+clustalo_value = 'run_clustalo'
+clustalo_values = [clustalo_value]
+if NO_CLUSTALO:
+    clustalo_disabled = True
+    clustalo_values = []
+
 sidebar = html.Div(
     [
         html.H2("Select Input"),
@@ -307,8 +316,14 @@ sidebar = html.Div(
             multiple=False
         ),
         dcc.Checklist(
-            ['If unchecked, will produce fasta without visualization. If checked, will run Clustal Omega to visualize fasta (can be slow)'],
-            ['If unchecked, will produce fasta without visualization. If checked, will run Clustal Omega to visualize fasta (can be slow)'],
+            options=[
+                {
+                    'label': 'If unchecked, will produce fasta without visualization. If checked, will run Clustal Omega to visualize fasta (can be slow)', 
+                    'value': clustalo_value, 
+                    'disabled': clustalo_disabled
+                 }
+            ],
+            value=clustalo_values,
             id="run_clustalo_option",
             inline=True
         ),
