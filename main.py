@@ -90,7 +90,7 @@ def load_df_to_merge():
 def generate_tree_from_alignment(alignment):
     calculator = DistanceCalculator('identity', )
     #distance_matrix = calculator.get_distance(alignment)
-    constructor = DistanceTreeConstructor(calculator)
+    constructor = DistanceTreeConstructor(calculator, "nj")
     tree = constructor.build_tree(alignment)
     return tree
 
