@@ -92,6 +92,7 @@ def generate_tree_from_alignment(alignment):
     #distance_matrix = calculator.get_distance(alignment)
     constructor = DistanceTreeConstructor(calculator, "nj")
     tree = constructor.build_tree(alignment)
+    tree.root_at_midpoint()
     return tree
 
 load_figure_template('COSMO')
@@ -176,11 +177,12 @@ def generate_elements(tree, xlen=30, ylen=30, grabbable=False):
 
         def calc_row(clade):
             for subclade in clade:
+                #logging.debug("Do we have a clade?")
                 if subclade not in positions:
                     calc_row(subclade)
             positions[clade] = ((positions[clade.clades[0]] +
                                  positions[clade.clades[-1]]) // 2)
-
+        logging.debug(tree.root)
         calc_row(tree.root)
         return positions
 
