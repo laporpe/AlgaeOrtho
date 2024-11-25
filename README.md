@@ -109,4 +109,3 @@ docker compose -f docker-compose-noclustalo.yml up
 
 This specifies the “noclustalo” (non-visualized) version, which should work on all machines.
 
-
