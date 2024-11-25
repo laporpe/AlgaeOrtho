@@ -87,12 +87,13 @@ def load_df_to_merge():
     #df_to_merge = concise_df[["group_id", "species", "proteinId"]]
     return concise_df[["group_id", "species", "proteinId"]]
 
-def generate_tree_from_alignment(alignment):
+def generate_tree_from_alignment(alignment, root_tree=True):
     calculator = DistanceCalculator('identity', )
     #distance_matrix = calculator.get_distance(alignment)
     constructor = DistanceTreeConstructor(calculator, "nj")
     tree = constructor.build_tree(alignment)
-    tree.root_at_midpoint()
+    if root_tree:
+        tree.root_at_midpoint()
     return tree
 
 load_figure_template('COSMO')
@@ -177,12 +178,13 @@ def generate_elements(tree, xlen=30, ylen=30, grabbable=False):
 
         def calc_row(clade):
             for subclade in clade:
-                #logging.debug("Do we have a clade?")
+                # logging.debug("TEST: subclade" + subclade)
                 if subclade not in positions:
                     calc_row(subclade)
             positions[clade] = ((positions[clade.clades[0]] +
                                  positions[clade.clades[-1]]) // 2)
-        logging.debug(tree.root)
+
+        # logging.debug("TEST: tree.root" + tree.root)
         calc_row(tree.root)
         return positions
 
@@ -317,10 +319,26 @@ sidebar = html.Div(
             # Allow multiple files to be uploaded
             multiple=False
         ),
+        html.Hr(),
+
+        html.H3(children='Options'),
+        
         dcc.Checklist(
             options=[
                 {
-                    'label': 'If unchecked, will produce fasta without visualization. If checked, will run Clustal Omega to visualize fasta (can be slow)', 
+                    'label': 'If checked, trees will be displayed rooted.', 
+                    'value': 'root_tree', 
+                    'disabled': False
+                 }
+            ],
+            value=['root_tree'],
+            id="root_tree_option",
+            inline=True
+        ),
+        dcc.Checklist(
+            options=[
+                {
+                    'label': 'If checked, Clustal Omega will run to visualize fasta on user uploads (can be slow). If unchecked, fasta will be produced without visualization.', 
                     'value': clustalo_value, 
                     'disabled': clustalo_disabled
                  }
@@ -419,15 +437,17 @@ def download_data(n_clicks):
     [Input('button1', 'n_clicks'),
      Input('button2', 'n_clicks'),
      Input('upload-data', 'contents'),
-     Input('run_clustalo_option', 'value')
+     Input('run_clustalo_option', 'value'),
+     Input('root_tree_option', 'value')
      ],
     prevent_initial_call=True
 )
-def update_data(n_clicks1, n_clicks2, upload_contents, run_clustalo_option):
+def update_data(n_clicks1, n_clicks2, upload_contents, run_clustalo_option, root_tree_option):
     logging.debug("update_data - n_clicks1:" + str(n_clicks1) + 
                   " n_clicks2:" + str(n_clicks2) + 
                   " contents2:" + str(upload_contents),
-                  " run_clustalo_option:" + str(run_clustalo_option))
+                  " run_clustalo_option:" + str(run_clustalo_option),
+                  " root_tree_option:" + str(root_tree_option))
     global df_to_merge_loaded
     global selected_dl_file
 
@@ -439,6 +459,7 @@ def update_data(n_clicks1, n_clicks2, upload_contents, run_clustalo_option):
     logging.debug("button_id: " + button_id)
     
     df = pd.DataFrame()
+    root_tree = len(root_tree_option) > 0
 
     if button_id == "button1":
         df = df1
@@ -446,7 +467,7 @@ def update_data(n_clicks1, n_clicks2, upload_contents, run_clustalo_option):
         alignfile = "hs2.clu"
         with open(alignfile, "r") as aln:
             alignment = AlignIO.read(aln, "clustal")
-            tree = generate_tree_from_alignment(alignment)
+            tree = generate_tree_from_alignment(alignment, root_tree)
             has_tree = False
             out_file_treetxt = data_path + "/hs2.tree.txt"
             with open(out_file_treetxt, "w") as tree_file:
@@ -469,7 +490,7 @@ def update_data(n_clicks1, n_clicks2, upload_contents, run_clustalo_option):
         alignfile = "lyco_ochr.clu"
         with open(alignfile, "r") as aln:
             alignment = AlignIO.read(aln, "clustal")
-            tree = generate_tree_from_alignment(alignment)
+            tree = generate_tree_from_alignment(alignment, root_tree)
             has_tree = False
             out_file_treetxt = data_path + "/lyco_ochr.tree.txt"
             with open(out_file_treetxt, "w") as tree_file:
@@ -649,7 +670,7 @@ def update_data(n_clicks1, n_clicks2, upload_contents, run_clustalo_option):
                     has_tree = False
                     with open(alignfile, "r") as aln:
                         alignment = AlignIO.read(aln, "clustal")
-                        tree = generate_tree_from_alignment(alignment)
+                        tree = generate_tree_from_alignment(alignment, root_tree)
                         with open(out_file_treetxt, "w") as tree_file:
                             tree_file.write(str(tree))
                             has_tree = True
