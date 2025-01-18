@@ -28,6 +28,10 @@ from itertools import groupby
 RUNNING_IN_DOCKER = os.getenv('ALGAEORTHO_DOCKER', 'False').lower() == 'true'
 NO_CLUSTALO = os.getenv('ALGAEORTHO_NOCLUSTALO', 'False').lower() == 'true'
 
+SAVE_FIGURES = os.getenv('SAVE_FIGURES', 'True').lower() == 'true'
+FIGURE_WIDTH = int(os.getenv('FIGURE_WIDTH', '3000'))
+FIGURE_HEIGHT = int(os.getenv('FIGURE_HEIGHT', '2000'))
+
 # if the app is running in a docker container, the path is different
 # note: there is a leading dot in the local path
 data_path = "./data"
@@ -44,6 +48,7 @@ logging.debug("Starting AlgaeOrtho App...")
 df_to_merge = pd.DataFrame()
 df_to_merge_loaded = False
 selected_dl_file = "./hs2.pim.txt"
+selected_heatmap_file = data_path + "/heatmap.png"
 
 def load_shapes():
     # Start incorporating backend:
@@ -284,8 +289,7 @@ if NO_CLUSTALO:
     clustalo_disabled = True
     clustalo_values = []
 
-sidebar = html.Div(
-    [
+sidebar_divs = [
         html.H2("Select Input"),
         html.Hr(),
         html.H3(children='The following two buttons select pre-loaded data'),
@@ -351,8 +355,20 @@ sidebar = html.Div(
 
         html.Button("Download results", id="btn-download-txt", n_clicks=0),
         dcc.Download(id="download-txt"),
+    ]
 
-    ],
+if SAVE_FIGURES:
+    sidebar_divs = sidebar_divs + [
+        html.Hr(),
+
+        html.Button("Download hi-res heatmap image", id="btn-download-heatmap", n_clicks=0),
+        dcc.Download(id="download-heatmap"),
+
+        html.Button("Download hi-res tree image", id="btn-download-tree-png", n_clicks=0),
+    ]
+
+sidebar = html.Div(
+    sidebar_divs,
     style=SIDEBAR_STYLE,
 )
 
@@ -393,15 +409,15 @@ app.layout = html.Div(children=[
             # dbc.Col(html.H3(children='Tree'),),
             dbc.Col([html.H3(children='Tree'),
                 cyto.Cytoscape(
-                id='cytoscape-usage-phylogeny',
-                elements=elements,
-                stylesheet=stylesheet,
-                layout=layout,
-                style={
-                    'height': '95vh',
-                    'width': '100%'
-                }
-            )],width=(12-LEFT_COL_WIDTH))
+                    id='cytoscape-usage-phylogeny',
+                    elements=elements,
+                    stylesheet=stylesheet,
+                    layout=layout,
+                    style={
+                        'height': '95vh',
+                        'width': '100%'
+                    }
+                )],width=(12-LEFT_COL_WIDTH))
         ]),
 
         dbc.Row([
@@ -413,6 +429,41 @@ app.layout = html.Div(children=[
     # ])
 ])
 
+
+@callback(
+    Output("cytoscape-usage-phylogeny", "generateImage"),
+    [
+        Input("btn-download-tree-png", "n_clicks"),
+    ])
+def download_cyto_image(n_clicks):
+    logging.debug("download_cyto_image - n_clicks:" + str(n_clicks))
+    # 'store': Stores the image data in 'imageData' !only jpg/png are supported
+    # 'download'`: Downloads the image as a file with all data handling
+    # 'both'`: Stores image data and downloads image as file.
+    ftype = 'png'
+    action = 'store'
+
+    if ctx.triggered:
+        if ctx.triggered_id != "tabs-image-export":
+            action = "download"
+            ftype = ctx.triggered_id.split("-")[-1]
+
+    return {
+        'type': ftype,
+        'action': action
+    }
+
+@app.callback(
+    [Output("download-heatmap", "data")],
+    [Input("btn-download-heatmap", "n_clicks")],
+    prevent_initial_call=True
+)
+def download_heatmap_image(n_clicks):
+    logging.debug("download_heatmap_image - n_clicks:" + str(n_clicks))
+    if os.path.isfile(selected_heatmap_file):
+        return [dcc.send_file(selected_heatmap_file)]
+    else:
+        return
 
 # upload data table info
 @app.callback(
@@ -721,9 +772,27 @@ def update_data(n_clicks1, n_clicks2, upload_contents, run_clustalo_option, root
         annotations = [['' for _ in range(len(z[0]))] for _ in range(len(z))]
 
         # take text off of figure
-        fig = ff.create_annotated_heatmap(z, x=x_text, y=y_text, annotation_text=annotations, colorscale='deep')
+        fig = ff.create_annotated_heatmap(
+            z, 
+            x=x_text, 
+            y=y_text, 
+            annotation_text=annotations, 
+            colorscale='deep'
+        )
         fig.update_xaxes(side="bottom")
         fig['data'][0]['showscale'] = True
+
+        # fig_time = str(int(time.time()))
+        if SAVE_FIGURES:
+            # if not os.path.exists(data_path + "/figures"):
+            #     os.mkdir(data_path + "/figures")
+            # fig_filename = data_path + "/figures/fig_heat_" + fig_time + ".png"
+            fig.write_image(
+                # file=fig_filename, 
+                file=selected_heatmap_file,
+                format="png",
+                width=FIGURE_WIDTH, 
+                height=FIGURE_HEIGHT)
 
         # Define elements, stylesheet and layout
         # download this from http://www.phyloxml.org/examples/apaf.xml

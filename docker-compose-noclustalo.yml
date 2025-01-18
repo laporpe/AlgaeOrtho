@@ -13,3 +13,6 @@ services:
     environment:
       SERVER_PORT: 8050
       DASH_DEBUG_MODE: True
+      SAVE_FIGURES: True
+      FIGURE_WIDTH: 2000
+      FIGURE_HEIGHT: 1500
