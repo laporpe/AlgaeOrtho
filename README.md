@@ -11,7 +11,14 @@ This Dash app, named AlgaeOrtho, is designed to analyze and visualize orthologou
 - [Step-by-step Guide](#guide)
 
 ## Installation
-To run this Dash app using Docker Compose, follow these steps:
+To run this Dash app using Docker without cloning and building the repository locally, run:
+- Mac/Linux/WSL:
+  - `docker run -p 8050:8050 -v ~/.algaeortho_data:/data ghcr.io/laporpe/algaeortho:main`
+- Windows:
+  - `docker run -p 8050:8050 -v "%HOMEPATH%\.algaeortho_data":/data ghcr.io/laporpe/algaeortho:main`
+
+## Installation (from source)
+To build and run this Dash app using Docker Compose, follow these steps:
 1. Clone this repository.
 2. Navigate to the project directory.
 3. Build and start the Docker container using the command: `docker-compose up --build`
